@@ -1,13 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import routes from '../constants/routes.json';
-import styles from './Home.css';
+import { Stack } from 'office-ui-fabric-react/lib/Stack';
+import HeaderCommandBar from './HeaderCommandBar';
+import CSVDataList from './CSVDataList';
+import { SongData } from '../utils/CSVUtilities';
 
-export default function Home(): JSX.Element {
+export default function Home() {
+  const [songData, setSongData] = React.useState<SongData[]>([]);
   return (
-    <div className={styles.container} data-tid="container">
-      <h2>Home</h2>
-      <Link to={routes.COUNTER}>to Counter</Link>
-    </div>
+    // Main Stack
+    <Stack>
+      {/* Header */}
+      <Stack horizontal>
+        <HeaderCommandBar
+          onLoadSongData={(data: SongData[]) => {
+            setSongData(data);
+          }}
+        />
+      </Stack>
+      <Stack horizontal style={{ width: '100vw' }}>
+        {/* Main Display Panel */}
+        <Stack style={{ width: '100vw' }}>
+          <CSVDataList songData={songData} />
+        </Stack>
+      </Stack>
+    </Stack>
   );
 }

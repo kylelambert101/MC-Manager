@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
-  "version": "1.2.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "mc-manager",
+  "productName": "MC Manager",
+  "version": "0.0.1",
+  "description": "Electron application for managing a music collection CSV file",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -52,8 +52,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "MC Manager",
+    "appId": "org.klambertlabs.mc-manager",
     "files": [
       "dist/",
       "node_modules/",
@@ -271,6 +271,7 @@
     "electron-log": "^4.2.2",
     "electron-updater": "^4.3.1",
     "history": "4.7.2",
+    "office-ui-fabric-react": "^7.121.6",
     "react": "^16.13.1",
     "react-dom": "^16.12.0",
     "react-hot-loader": "^4.12.21",
