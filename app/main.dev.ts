@@ -74,6 +74,7 @@ const createWindow = async () => {
     fullscreen: true,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
     },
   });
 

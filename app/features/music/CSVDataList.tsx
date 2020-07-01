@@ -1,15 +1,12 @@
 import * as React from 'react';
 import { IColumn, DetailsList } from 'office-ui-fabric-react/lib/DetailsList';
-import { ScrollablePane } from 'office-ui-fabric-react/lib/ScrollablePane';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
-import { getDummySongData, SongData } from '../utils/CSVUtilities';
-import { getColumnsFromObjectArray } from '../utils/DetailsListUtilities';
+import { useSelector } from 'react-redux';
+import { getDummySongData, SongData } from '../../utils/CSVUtilities';
+import { getColumnsFromObjectArray } from '../../utils/DetailsListUtilities';
+import { songs } from './musicSlice';
 
-type LocalProps = {
-  songData: SongData[];
-};
-
-const CSVDataList = (props: LocalProps): React.ReactElement => {
+const CSVDataList = (): React.ReactElement => {
   //   const columns: IColumn[] = [
   //     {
   //       key: 'column1',
@@ -23,7 +20,7 @@ const CSVDataList = (props: LocalProps): React.ReactElement => {
   //     }
   //   ];
 
-  const { songData } = props;
+  const songData = useSelector(songs);
 
   // const items = getDummySongData();
   const items = songData;

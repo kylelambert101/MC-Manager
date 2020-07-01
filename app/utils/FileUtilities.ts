@@ -7,10 +7,18 @@ import {
   isCSVHeaderValid,
 } from './CSVUtilities';
 
-const getFileContents = (
-  filePath: string,
-  onError: (message: string) => void
-): string | undefined => {
+export const selectFileToLoad = async (): Promise<string | undefined> => {
+  // Use remote dialog because this won't run from main thread
+  const { filePaths } = await remote.dialog.showOpenDialog({
+    // For other properties see:
+    // https://www.electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options
+    properties: ['openFile'],
+  });
+
+  return filePaths[0] || undefined;
+};
+
+const getFileContents = (filePath: string): string | undefined => {
   console.log(`Opening file: "${filePath}"`);
 
   const fileBuffer = fs.readFileSync(filePath);
@@ -40,31 +48,14 @@ const getFileContents = (
     console.log(
       `Tried reading file "${filePath}" with encoding "${encoding}". Resulted in error: ${err.message}`
     );
-    onError(
-      'There was a problem opening that file. See the dev console for more details. '
-    );
+    throw err;
   }
   return results;
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const loadCSVFile = async (
-  onLoad: (data: SongData[]) => void,
-  onError: (message: string) => void
-) => {
-  // Use remote dialog because this won't run from main thread
-  const { filePaths } = await remote.dialog.showOpenDialog({
-    // For other properties see:
-    // https://www.electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options
-    properties: ['openFile'],
-  });
-
-  if (filePaths === undefined || filePaths.length === 0) {
-    console.log('No file was selected. Aborting load.');
-    return;
-  }
-  const filePath = filePaths[0];
-  const data = getFileContents(filePath, onError)?.split('\n') || [];
+export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
+  const data = getFileContents(filePath)?.split('\n') || [];
   console.log('Retrieved Data');
 
   // First row is the header row
@@ -72,8 +63,7 @@ export const loadCSVFile = async (
 
   // Check that header rows are in the right position before processing
   if (!isCSVHeaderValid(header)) {
-    onError('CSV header columns were not in the expected format');
-    return;
+    throw new Error('CSV header columns were not in the expected format');
   }
 
   // Pop empty lines at the end of the CSV, if any
@@ -83,11 +73,8 @@ export const loadCSVFile = async (
 
   // If there's no data, that's a problem.
   if (!datarows || datarows.length === 0) {
-    onError('No data found in CSV file');
-    return;
+    throw new Error('No data found in CSV file');
   }
 
-  const allSongData = datarows.map((row) => parseSongDataFromCSVRow(row));
-
-  onLoad(allSongData);
+  return datarows.map((row) => parseSongDataFromCSVRow(row));
 };

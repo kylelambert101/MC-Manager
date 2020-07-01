@@ -1,8 +1,8 @@
 /* NOTE THESE FIELDS MUST MATCH UP TO EXPECTEDCSVCOLUMNORDER BELOW */
 export type SongData = {
   id: number;
-  date: Date;
-  day: Date;
+  date: string;
+  day: string;
   title: string;
   new_file_name: string;
   original_file_name: string;
@@ -62,9 +62,9 @@ export const parseSongDataFromCSVRow = (csvRow: string): SongData => {
         case 'id':
           cleanedValue = Number(value);
           break;
-        case 'date':
-          cleanedValue = new Date(value);
-          break;
+        // case 'date':
+        //   cleanedValue = new Date(value);
+        //   break;
         case 'track_number':
           cleanedValue = Number(value);
           break;
@@ -91,9 +91,9 @@ export const getDummySongData = (): SongData[] => {
     {
       title: 'Item 1',
       id: 1,
-      date: new Date('2020-06-01'),
+      date: '2020-06-01',
       new_file_name: 'item_1.txt',
-      day: new Date('2020-06-01'),
+      day: '2020-06-01',
       original_file_name: 'origname',
       original_file_path: 'origpath',
       file_extension: 'extension',
@@ -107,9 +107,9 @@ export const getDummySongData = (): SongData[] => {
     {
       title: 'Item 2',
       id: 2,
-      date: new Date('2020-06-02'),
+      date: '2020-06-02',
       new_file_name: 'item_2.txt',
-      day: new Date('2020-06-02'),
+      day: '2020-06-02',
       original_file_name: 'origname2',
       original_file_path: 'origpath2',
       file_extension: 'extension2',
