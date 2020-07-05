@@ -34,15 +34,15 @@ const expectedCSVColumnOrder = [
   'duration',
 ];
 
-export const isCSVHeaderValid = (header: string): boolean => {
+export const isCSVHeaderValid = (header: string[]): boolean => {
   // Check whether header string matches expected column order, ignoring case
   return (
-    JSON.stringify(header.split(',')).toLowerCase() ===
+    JSON.stringify(header).toLowerCase() ===
     JSON.stringify(expectedCSVColumnOrder).toLowerCase()
   );
 };
 
-export const parseSongDataFromCSVRow = (csvRow: string): SongData => {
+export const parseSongDataFromCSVRow = (csvRow: string[]): SongData => {
   /*
    * I'm making a couple of assumptions here:
    * 1. Columns are in expected order per expectedCSVColumnOrder above
@@ -52,7 +52,7 @@ export const parseSongDataFromCSVRow = (csvRow: string): SongData => {
    * using, for each index, the item from expectedCSVColumnOrder as the field name
    * and the item from csvRow as the value.
    */
-  return csvRow.split(',').reduce(
+  return csvRow.reduce(
     (song, value, index) => {
       const targetField = expectedCSVColumnOrder[index];
       // Optionally parse value as a different type for some fields

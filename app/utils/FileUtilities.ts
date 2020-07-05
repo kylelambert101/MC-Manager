@@ -1,4 +1,5 @@
 import { remote } from 'electron';
+import * as Papa from 'papaparse';
 import fs from 'fs';
 // import detectCharacterEncoding from 'detect-character-encoding';
 import {
@@ -55,7 +56,7 @@ const getFileContents = (filePath: string): string | undefined => {
 
 // eslint-disable-next-line import/prefer-default-export
 export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
-  const data = getFileContents(filePath)?.split('\n') || [];
+  const data = Papa.parse(getFileContents(filePath))?.data || [];
   console.log('Retrieved Data');
 
   // First row is the header row
@@ -67,7 +68,7 @@ export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
   }
 
   // Pop empty lines at the end of the CSV, if any
-  while (datarows.length > 0 && datarows[datarows.length - 1] === '') {
+  while (datarows.length > 0 && datarows[datarows.length - 1].length === 1) {
     datarows.pop();
   }
 
@@ -76,5 +77,5 @@ export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
     throw new Error('No data found in CSV file');
   }
 
-  return datarows.map((row) => parseSongDataFromCSVRow(row));
+  return datarows.map((row: string[]) => parseSongDataFromCSVRow(row));
 };
