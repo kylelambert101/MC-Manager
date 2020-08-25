@@ -46,18 +46,21 @@ const HeaderCommandBar = (): React.ReactElement => {
       text: 'Save CSV',
       iconProps: { iconName: 'PromotedDatabase' },
       onClick: () => console.log('Share'),
+      disabled: true,
     },
     {
       key: 'newItem',
       text: 'Add Songs',
       cacheKey: 'myCacheKey', // changing this key will invalidate this item's cache
       iconProps: { iconName: 'Add' }, // MusicNote is another good option
+      disabled: true,
     },
     {
       key: 'download',
       text: 'Cancel Changes',
       iconProps: { iconName: 'Cancel' },
       onClick: () => console.log('Download'),
+      disabled: true,
     },
   ];
 
@@ -67,18 +70,21 @@ const HeaderCommandBar = (): React.ReactElement => {
       text: 'Move to...',
       onClick: () => console.log('Move to'),
       iconProps: { iconName: 'MoveToFolder' },
+      disabled: true,
     },
     {
       key: 'copy',
       text: 'Copy to...',
       onClick: () => console.log('Copy to'),
       iconProps: { iconName: 'Copy' },
+      disabled: true,
     },
     {
       key: 'rename',
       text: 'Rename...',
       onClick: () => console.log('Rename'),
       iconProps: { iconName: 'Edit' },
+      disabled: true,
     },
   ];
 
@@ -91,6 +97,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       iconOnly: true,
       iconProps: { iconName: 'Tiles' },
       onClick: () => console.log('Tiles'),
+      disabled: true,
     },
     {
       key: 'info',
@@ -100,6 +107,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       iconOnly: true,
       iconProps: { iconName: 'Info' },
       onClick: () => console.log('Info '),
+      disabled: true,
     },
   ];
 
