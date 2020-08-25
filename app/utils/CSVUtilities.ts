@@ -1,6 +1,7 @@
 /* NOTE THESE FIELDS MUST MATCH UP TO EXPECTEDCSVCOLUMNORDER BELOW */
 export type SongData = {
   id: number;
+  include: boolean;
   date: string;
   day: string;
   title: string;
@@ -19,6 +20,7 @@ export type SongData = {
 /* THIS MUST MATCH SONGDATA FIELDS ABOVE */
 const expectedCSVColumnOrder = [
   'id',
+  'include',
   'date',
   'day',
   'title',
@@ -74,6 +76,9 @@ export const parseSongDataFromCSVRow = (csvRow: string[]): SongData => {
         case 'duration':
           cleanedValue = Number(value);
           break;
+        case 'include':
+          cleanedValue = Boolean(Number(value));
+          break;
         default:
           cleanedValue = value;
       }
@@ -89,11 +94,12 @@ export const parseSongDataFromCSVRow = (csvRow: string[]): SongData => {
 export const getDummySongData = (): SongData[] => {
   return [
     {
-      title: 'Item 1',
       id: 1,
+      include: true,
       date: '2020-06-01',
-      new_file_name: 'item_1.txt',
       day: '2020-06-01',
+      title: 'Item 1',
+      new_file_name: 'item_1.txt',
       original_file_name: 'origname',
       original_file_path: 'origpath',
       file_extension: 'extension',
@@ -105,11 +111,12 @@ export const getDummySongData = (): SongData[] => {
       duration: 100,
     },
     {
-      title: 'Item 2',
       id: 2,
+      include: false,
       date: '2020-06-02',
-      new_file_name: 'item_2.txt',
       day: '2020-06-02',
+      title: 'Item 2',
+      new_file_name: 'item_2.txt',
       original_file_name: 'origname2',
       original_file_path: 'origpath2',
       file_extension: 'extension2',

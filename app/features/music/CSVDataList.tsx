@@ -25,7 +25,18 @@ const CSVDataList = (): React.ReactElement => {
   // const items = getDummySongData();
   const items = songData;
 
-  const columns: IColumn[] = getColumnsFromObjectArray(items);
+  /*
+   * Since CSV columns are validated to match expected order, the ternary
+   * below should return the same columns for both paths, but I'm leaving it
+   * just in case there is a desire to dynamically show columns in a
+   * non-validated CSV at some point.
+   */
+  const columns: IColumn[] =
+    items.length === 0
+      ? // There is no song data loaded so use dummy data for column population
+        getColumnsFromObjectArray(getDummySongData())
+      : // Song data was loaded - use the columns from the file
+        getColumnsFromObjectArray(items);
   return (
     <>
       <Fabric>
