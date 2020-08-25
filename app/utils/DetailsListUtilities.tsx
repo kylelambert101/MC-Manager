@@ -14,9 +14,11 @@ export type TypedProperty = {
 
 /**
  * Get the name and datatype of all properties of an object
- * @param object G
+ * @param object Object to analyze
  */
-export const getProperties = (object: any): TypedProperty[] => {
+export const getProperties = (
+  object: Record<string, unknown>
+): TypedProperty[] => {
   return Object.keys(object).map((key) => ({
     name: key,
     dataType: typeof object[key],
@@ -42,7 +44,9 @@ export const getDisplayName = (field: string): string => {
 /**
  * Get an array of IColumns that can be used for a list of objects
  */
-export const getColumnsFromObjectArray = (objects: any[]): IColumn[] => {
+export const getColumnsFromObjectArray = (
+  objects: Record<string, unknown>[]
+): IColumn[] => {
   const allFields = objects
     // Get properties of all objects
     .map((obj) => getProperties(obj))
@@ -67,14 +71,13 @@ export const getColumnsFromObjectArray = (objects: any[]): IColumn[] => {
       (item) => `${item}`.length
     );
     const defaultColumnSize = Math.min(
-      Math.floor(window.innerWidth / 2),
+      500,
       10 * Math.max(field.name.length, ...uniqueValueLengths)
     );
     return {
       key: `column_${field.name}`,
       name: displayName,
       fieldName: field.name,
-      // Expand column to fit contents up to half window width
       minWidth: defaultColumnSize,
       isResizable: true,
       isCollapsable: false,

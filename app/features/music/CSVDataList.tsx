@@ -3,27 +3,19 @@ import {
   IColumn,
   DetailsList,
   CheckboxVisibility,
+  IDetailsHeaderProps,
+  IDetailsColumnRenderTooltipProps,
 } from 'office-ui-fabric-react/lib/DetailsList';
-import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
 import { useSelector } from 'react-redux';
-import { getDummySongData, SongData } from '../../utils/CSVUtilities';
+import { IRenderFunction } from 'office-ui-fabric-react/lib/Utilities';
+import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
+import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
+import { getDummySongData } from '../../utils/CSVUtilities';
 import { getColumnsFromObjectArray } from '../../utils/DetailsListUtilities';
 import { songs } from './musicSlice';
 
 const CSVDataList = (): React.ReactElement => {
-  //   const columns: IColumn[] = [
-  //     {
-  //       key: 'column1',
-  //       name: 'id',
-  //       fieldName: 'id',
-  //       minWidth: 70,
-  //       maxWidth: 90,
-  //       isResizable: true,
-  //       isCollapsable: true,
-  //       data: 'number'
-  //     }
-  //   ];
-
+  // Get song data from redux store
   const songData = useSelector(songs);
 
   // const items = getDummySongData();
@@ -42,30 +34,34 @@ const CSVDataList = (): React.ReactElement => {
       : // Song data was loaded - use the columns from the file
         getColumnsFromObjectArray(items);
 
+  const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
+    props,
+    defaultRender
+  ) => {
+    if (!props || !defaultRender) {
+      return null;
+    }
+    // This tooltip stuff keeps headers aligned with columns during horizontal scroll
+    const onRenderColumnHeaderTooltip: IRenderFunction<IDetailsColumnRenderTooltipProps> = (
+      tooltipHostProps
+      // eslint-disable-next-line react/jsx-props-no-spreading
+    ) => <TooltipHost {...tooltipHostProps} />;
+    return (
+      <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
+        {defaultRender({
+          ...props,
+          onRenderColumnHeaderTooltip,
+        })}
+      </Sticky>
+    );
+  };
   return (
-    <>
-      <Fabric>
-        {/* <ScrollablePane> */}
-        <DetailsList
-          // columns={[
-          //   {
-          //     key: 'column1',
-          //     name: 'id',
-          //     fieldName: 'id',
-          //     minWidth: 70,
-          //     maxWidth: 90,
-          //     isResizable: true,
-          //     isCollapsable: true,
-          //     data: 'number'
-          //   }
-          // ]}
-          columns={columns}
-          items={items}
-          checkboxVisibility={CheckboxVisibility.hidden}
-        />
-        {/* </ScrollablePane> */}
-      </Fabric>
-    </>
+    <DetailsList
+      columns={columns}
+      items={items}
+      checkboxVisibility={CheckboxVisibility.hidden}
+      onRenderDetailsHeader={onRenderDetailsHeader}
+    />
   );
 };
 

@@ -1,22 +1,27 @@
 import React from 'react';
-import { Stack } from 'office-ui-fabric-react/lib/Stack';
+import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
+import { ScrollablePane } from 'office-ui-fabric-react/lib/ScrollablePane';
+import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import HeaderCommandBar from '../features/music/HeaderCommandBar';
 import CSVDataList from '../features/music/CSVDataList';
 
 export default function Home() {
   return (
-    // Main Stack
-    <Stack>
-      {/* Header */}
-      <Stack horizontal>
-        <HeaderCommandBar />
-      </Stack>
-      <Stack horizontal style={{ width: '100vw' }}>
-        {/* Main Display Panel */}
-        <Stack style={{ width: '100vw' }}>
-          <CSVDataList />
-        </Stack>
-      </Stack>
-    </Stack>
+    <Fabric
+      style={{
+        display: 'flex',
+        width: '100%',
+        position: 'absolute',
+        top: '0',
+        bottom: '0',
+      }}
+    >
+      <ScrollablePane>
+        <Sticky stickyPosition={StickyPositionType.Header}>
+          <HeaderCommandBar />
+        </Sticky>
+        <CSVDataList />
+      </ScrollablePane>
+    </Fabric>
   );
 }
