@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { IColumn, DetailsList } from 'office-ui-fabric-react/lib/DetailsList';
+import {
+  IColumn,
+  DetailsList,
+  CheckboxVisibility,
+} from 'office-ui-fabric-react/lib/DetailsList';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
 import { useSelector } from 'react-redux';
 import { getDummySongData, SongData } from '../../utils/CSVUtilities';
@@ -37,6 +41,7 @@ const CSVDataList = (): React.ReactElement => {
         getColumnsFromObjectArray(getDummySongData())
       : // Song data was loaded - use the columns from the file
         getColumnsFromObjectArray(items);
+
   return (
     <>
       <Fabric>
@@ -56,6 +61,7 @@ const CSVDataList = (): React.ReactElement => {
           // ]}
           columns={columns}
           items={items}
+          checkboxVisibility={CheckboxVisibility.hidden}
         />
         {/* </ScrollablePane> */}
       </Fabric>
