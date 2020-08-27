@@ -108,7 +108,7 @@ export const getColumnsFromObjectArray = (
     );
     const defaultColumnSize = Math.min(
       500,
-      10 * Math.max(field.name.length, ...uniqueValueLengths)
+      8 * Math.max(field.name.length, ...uniqueValueLengths)
     );
     return {
       key: `column_${field.name}`,
