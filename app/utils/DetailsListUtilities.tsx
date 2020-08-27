@@ -1,6 +1,5 @@
 import React from 'react';
 import { IColumn } from 'office-ui-fabric-react/lib/DetailsList';
-import { Checkbox, ICheckboxStyles } from 'office-ui-fabric-react/lib/Checkbox';
 import { SongData } from './CSVUtilities';
 import { getUniqueValuesByField } from './ArrayUtilities';
 import { convertToTitleCase } from './StringUtilities';
@@ -40,41 +39,6 @@ export const getDisplayName = (field: string): string => {
       displayName = convertToTitleCase(field.replace(/_/g, ' '));
   }
   return displayName;
-};
-
-const getFieldAdjustedComponent = (
-  songData: SongData,
-  field: TypedProperty
-) => {
-  const fieldValue = Reflect.get(songData, field.name);
-  let itemComponent;
-  switch (field.name) {
-    // ID Column
-    case 'id':
-      itemComponent = (
-        <span style={{ fontFamily: 'monospace', color: 'grey' }}>
-          <>{`${fieldValue}`}</>
-        </span>
-      );
-      break;
-    case 'include':
-      itemComponent = (
-        <Checkbox
-          checked={Boolean(fieldValue)}
-          boxSide="end"
-          styles={{
-            root: {
-              marginLeft: '0.75em',
-            },
-          }}
-          // TODO Include onChange function to update redux state for this songData
-        />
-      );
-      break;
-    default:
-      itemComponent = <span>{`${fieldValue}`}</span>;
-  }
-  return itemComponent;
 };
 
 /**
@@ -120,7 +84,8 @@ export const getColumnsFromObjectArray = (
       data: field.dataType,
       // eslint-disable-next-line react/display-name
       onRender: (item: SongData) => {
-        return getFieldAdjustedComponent(item, field);
+        // return getFieldAdjustedComponent(item, field);
+        return <span>{`${Reflect.get(item, field.name)}`}</span>;
       },
     } as IColumn;
   });
