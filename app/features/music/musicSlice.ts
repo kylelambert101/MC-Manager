@@ -22,7 +22,6 @@ const musicSlice = createSlice({
     },
     toggleInclude: (state, action) => {
       const { song } = action.payload;
-      // FIXME this operation is fairly costly and it takes too long.
       state.songs = state.songs.map((s) =>
         s.id === song.id ? { ...s, include: !s.include } : s
       );
