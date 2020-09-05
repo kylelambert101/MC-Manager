@@ -1,5 +1,5 @@
-import { IColumn } from 'office-ui-fabric-react/lib/DetailsList';
 import React from 'react';
+import { IColumn } from 'office-ui-fabric-react/lib/DetailsList';
 import { SongData } from './CSVUtilities';
 import { getUniqueValuesByField } from './ArrayUtilities';
 import { convertToTitleCase } from './StringUtilities';
@@ -72,7 +72,7 @@ export const getColumnsFromObjectArray = (
     );
     const defaultColumnSize = Math.min(
       500,
-      10 * Math.max(field.name.length, ...uniqueValueLengths)
+      8 * Math.max(field.name.length, ...uniqueValueLengths)
     );
     return {
       key: `column_${field.name}`,
@@ -84,6 +84,7 @@ export const getColumnsFromObjectArray = (
       data: field.dataType,
       // eslint-disable-next-line react/display-name
       onRender: (item: SongData) => {
+        // return getFieldAdjustedComponent(item, field);
         return <span>{`${Reflect.get(item, field.name)}`}</span>;
       },
     } as IColumn;

@@ -20,11 +20,25 @@ const musicSlice = createSlice({
         state.songs = songData;
       }
     },
+    toggleInclude: (state, action) => {
+      const { song } = action.payload;
+      state.songs = state.songs.map((s) =>
+        s.id === song.id ? { ...s, include: !s.include } : s
+      );
+    },
   },
 });
 
-export const { requestCSVLoad, receiveCSVLoad } = musicSlice.actions;
+export const {
+  requestCSVLoad,
+  receiveCSVLoad,
+  toggleInclude,
+} = musicSlice.actions;
 
+/**
+ * Load data from a music_collection csv file into the redux store
+ * @param filePath Path to the csv file to load
+ */
 export const loadDataFromCSV = (filePath: string): AppThunk => {
   return async (dispatch) => {
     // Tell the store data is requested
@@ -35,6 +49,16 @@ export const loadDataFromCSV = (filePath: string): AppThunk => {
 
     // Tell the store data was received
     dispatch(receiveCSVLoad({ songData: result }));
+  };
+};
+
+/**
+ * Invert the `include` value for the given song in redux state
+ * @param song
+ */
+export const toggleSongInclude = (song: SongData): AppThunk => {
+  return async (dispatch) => {
+    dispatch(toggleInclude({ song }));
   };
 };
 
