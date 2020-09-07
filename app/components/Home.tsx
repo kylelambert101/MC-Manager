@@ -5,7 +5,7 @@ import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import HeaderCommandBar from '../features/music/HeaderCommandBar';
 import CSVDataList from '../features/music/CSVDataList';
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
     <Fabric
       style={{
