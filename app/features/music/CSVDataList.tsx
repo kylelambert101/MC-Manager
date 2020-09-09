@@ -52,23 +52,6 @@ const getFieldAdjustedComponent = (
 };
 
 /**
- * Get a new IColumn array infused with redux store data
- * @param columns IColumn array
- * @param dispatch react-redux dispatch function
- */
-const getReduxAugmentedColumns = (columns: IColumn[]): IColumn[] => {
-  return columns.map((column) => ({
-    ...column,
-    onRender: (item: SongData) => {
-      return getFieldAdjustedComponent(item, {
-        name: column.fieldName,
-        dataType: column.data,
-      } as TypedProperty);
-    },
-  }));
-};
-
-/**
  * CSVDataList - An DetailsList wrapper to represent music_collection csv data
  */
 const CSVDataList = (): React.ReactElement => {
@@ -91,8 +74,16 @@ const CSVDataList = (): React.ReactElement => {
       : // Song data was loaded - use the columns from the file
         getColumnsFromObjectArray(items);
 
-  // Infuse columns with redux state
-  columns = getReduxAugmentedColumns(columns);
+  // Adjust how columns render based on their data
+  columns = columns.map((column) => ({
+    ...column,
+    onRender: (item: SongData) => {
+      return getFieldAdjustedComponent(item, {
+        name: column.fieldName,
+        dataType: column.data,
+      } as TypedProperty);
+    },
+  }));
 
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
     props,
