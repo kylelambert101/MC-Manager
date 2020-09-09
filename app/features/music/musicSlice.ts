@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // eslint-disable-next-line import/no-cycle
 import { AppThunk, RootState } from '../../store';
 import { SongData } from '../../utils/CSVUtilities';
@@ -11,8 +11,8 @@ const musicSlice = createSlice({
     requestCSVLoad: (state) => {
       state.isLoading = true;
     },
-    receiveCSVLoad: (state, action) => {
-      const { songData } = action.payload;
+    receiveCSVLoad: (state, action: PayloadAction<SongData[]>) => {
+      const songData = action.payload;
       state.isLoading = false;
       // If no song data comes through, don't change the state
       // -> May represent a "Cancel" of load file dialogue
@@ -20,10 +20,10 @@ const musicSlice = createSlice({
         state.songs = songData;
       }
     },
-    toggleInclude: (state, action) => {
-      const { song } = action.payload;
+    toggleInclude: (state, action: PayloadAction<SongData>) => {
+      const targetSong = action.payload;
       state.songs = state.songs.map((s) =>
-        s.id === song.id ? { ...s, include: !s.include } : s
+        s.id === targetSong.id ? { ...s, include: !s.include } : s
       );
     },
   },
@@ -48,17 +48,7 @@ export const loadDataFromCSV = (filePath: string): AppThunk => {
     const result = await loadCSVFile(filePath);
 
     // Tell the store data was received
-    dispatch(receiveCSVLoad({ songData: result }));
-  };
-};
-
-/**
- * Invert the `include` value for the given song in redux state
- * @param song
- */
-export const toggleSongInclude = (song: SongData): AppThunk => {
-  return async (dispatch) => {
-    dispatch(toggleInclude({ song }));
+    dispatch(receiveCSVLoad(result));
   };
 };
 

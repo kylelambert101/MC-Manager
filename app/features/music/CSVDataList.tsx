@@ -18,7 +18,8 @@ import {
   getColumnsFromObjectArray,
   TypedProperty,
 } from '../../utils/DetailsListUtilities';
-import { songs, toggleSongInclude } from './musicSlice';
+import { songs, toggleInclude } from './musicSlice';
+import IncludeCheckbox from './IncludeCheckbox';
 
 /**
  * Get the component that should be used for a particular column's items
@@ -28,8 +29,7 @@ import { songs, toggleSongInclude } from './musicSlice';
  */
 const getFieldAdjustedComponent = (
   songData: SongData,
-  field: TypedProperty,
-  dispatch: React.Dispatch<any>
+  field: TypedProperty
 ) => {
   const fieldValue = Reflect.get(songData, field.name);
   let itemComponent;
@@ -43,20 +43,7 @@ const getFieldAdjustedComponent = (
       );
       break;
     case 'include':
-      itemComponent = (
-        <Checkbox
-          checked={Boolean(fieldValue)}
-          boxSide="end"
-          styles={{
-            root: {
-              marginLeft: '0.75em',
-            },
-          }}
-          onChange={() => {
-            dispatch(toggleSongInclude(songData));
-          }}
-        />
-      );
+      itemComponent = <IncludeCheckbox song={songData} />;
       break;
     default:
       itemComponent = <span>{`${fieldValue}`}</span>;
@@ -69,18 +56,14 @@ const getFieldAdjustedComponent = (
  * @param columns IColumn array
  * @param dispatch react-redux dispatch function
  */
-const getReduxAugmentedColumns = (
-  columns: IColumn[],
-  dispatch: React.Dispatch<any>
-): IColumn[] => {
+const getReduxAugmentedColumns = (columns: IColumn[]): IColumn[] => {
   return columns.map((column) => ({
     ...column,
     onRender: (item: SongData) => {
-      return getFieldAdjustedComponent(
-        item,
-        { name: column.fieldName, dataType: column.data } as TypedProperty,
-        dispatch
-      );
+      return getFieldAdjustedComponent(item, {
+        name: column.fieldName,
+        dataType: column.data,
+      } as TypedProperty);
     },
   }));
 };
@@ -91,7 +74,6 @@ const getReduxAugmentedColumns = (
 const CSVDataList = (): React.ReactElement => {
   // Get song data from redux store
   const songData = useSelector(songs);
-  const dispatch = useDispatch();
 
   // const items = getDummySongData();
   const items = songData;
@@ -110,7 +92,7 @@ const CSVDataList = (): React.ReactElement => {
         getColumnsFromObjectArray(items);
 
   // Infuse columns with redux state
-  columns = getReduxAugmentedColumns(columns, dispatch);
+  columns = getReduxAugmentedColumns(columns);
 
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
     props,
