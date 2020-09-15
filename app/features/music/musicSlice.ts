@@ -20,10 +20,10 @@ const musicSlice = createSlice({
         state.songs = songData;
       }
     },
-    toggleInclude: (state, action: PayloadAction<SongData>) => {
+    toggleActive: (state, action: PayloadAction<SongData>) => {
       const targetSong = action.payload;
       state.songs = state.songs.map((s) =>
-        s.id === targetSong.id ? { ...s, include: !s.include } : s
+        s.id === targetSong.id ? { ...s, active: !s.active } : s
       );
     },
   },
@@ -32,7 +32,7 @@ const musicSlice = createSlice({
 export const {
   requestCSVLoad,
   receiveCSVLoad,
-  toggleInclude,
+  toggleActive,
 } = musicSlice.actions;
 
 /**

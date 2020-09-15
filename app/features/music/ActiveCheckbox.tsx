@@ -2,19 +2,19 @@ import * as React from 'react';
 import { Checkbox, ICheckboxProps } from 'office-ui-fabric-react/lib/Checkbox';
 import { useDispatch } from 'react-redux';
 import { SongData } from '../../utils/CSVUtilities';
-import { toggleInclude } from './musicSlice';
+import { toggleActive } from './musicSlice';
 
-interface IncludeCheckboxProps {
+interface ActiveCheckboxProps {
   song: SongData;
 }
 
-const IncludeCheckbox = (props: IncludeCheckboxProps): React.ReactElement => {
+const ActiveCheckbox = (props: ActiveCheckboxProps): React.ReactElement => {
   const { song } = props;
   const dispatch = useDispatch();
 
   return (
     <Checkbox
-      checked={song.include}
+      checked={song.active}
       boxSide="end"
       styles={{
         root: {
@@ -22,10 +22,10 @@ const IncludeCheckbox = (props: IncludeCheckboxProps): React.ReactElement => {
         },
       }}
       onChange={() => {
-        dispatch(toggleInclude(song));
+        dispatch(toggleActive(song));
       }}
     />
   );
 };
 
-export default IncludeCheckbox;
+export default ActiveCheckbox;

@@ -18,8 +18,8 @@ import {
   getColumnsFromObjectArray,
   TypedProperty,
 } from '../../utils/DetailsListUtilities';
-import { songs, toggleInclude } from './musicSlice';
-import IncludeCheckbox from './IncludeCheckbox';
+import { songs, toggleActive } from './musicSlice';
+import ActiveCheckbox from './ActiveCheckbox';
 
 /**
  * Get the component that should be used for a particular column's items
@@ -42,8 +42,8 @@ const getFieldAdjustedComponent = (
         </span>
       );
       break;
-    case 'include':
-      itemComponent = <IncludeCheckbox song={songData} />;
+    case 'active':
+      itemComponent = <ActiveCheckbox song={songData} />;
       break;
     default:
       itemComponent = <span>{`${fieldValue}`}</span>;
