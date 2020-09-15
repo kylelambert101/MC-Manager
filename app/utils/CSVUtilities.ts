@@ -1,7 +1,7 @@
 /* NOTE THESE FIELDS MUST MATCH UP TO EXPECTEDCSVCOLUMNORDER BELOW */
 export type SongData = {
   id: number;
-  include: boolean;
+  active: boolean;
   date: string;
   day: string;
   title: string;
@@ -17,10 +17,8 @@ export type SongData = {
   duration: number;
 };
 
-/* THIS MUST MATCH SONGDATA FIELDS ABOVE */
 const expectedCSVColumnOrder = [
-  'id',
-  'include',
+  'active',
   'date',
   'day',
   'title',
@@ -44,7 +42,10 @@ export const isCSVHeaderValid = (header: string[]): boolean => {
   );
 };
 
-export const parseSongDataFromCSVRow = (csvRow: string[]): SongData => {
+export const parseSongDataFromCSVRow = (
+  csvRow: string[],
+  rowNum: number
+): SongData => {
   /*
    * I'm making a couple of assumptions here:
    * 1. Columns are in expected order per expectedCSVColumnOrder above
@@ -61,9 +62,6 @@ export const parseSongDataFromCSVRow = (csvRow: string[]): SongData => {
       // This cleanup should maybe be in its own function...
       let cleanedValue;
       switch (targetField) {
-        case 'id':
-          cleanedValue = Number(value);
-          break;
         // case 'date':
         //   cleanedValue = new Date(value);
         //   break;
@@ -76,7 +74,7 @@ export const parseSongDataFromCSVRow = (csvRow: string[]): SongData => {
         case 'duration':
           cleanedValue = Number(value);
           break;
-        case 'include':
+        case 'active':
           cleanedValue = Boolean(Number(value));
           break;
         default:
@@ -87,7 +85,7 @@ export const parseSongDataFromCSVRow = (csvRow: string[]): SongData => {
         [targetField]: cleanedValue,
       };
     },
-    {} // initial value for "song"
+    { id: rowNum } // initial value for "song"
   ) as SongData;
 };
 
@@ -95,7 +93,7 @@ export const getDummySongData = (): SongData[] => {
   return [
     {
       id: 1,
-      include: true,
+      active: true,
       date: '2020-06-01',
       day: '2020-06-01',
       title: 'Item 1',
@@ -112,7 +110,7 @@ export const getDummySongData = (): SongData[] => {
     },
     {
       id: 2,
-      include: false,
+      active: false,
       date: '2020-06-02',
       day: '2020-06-02',
       title: 'Item 2',

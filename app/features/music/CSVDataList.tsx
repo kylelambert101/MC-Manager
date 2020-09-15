@@ -18,7 +18,8 @@ import {
   getColumnsFromObjectArray,
   TypedProperty,
 } from '../../utils/DetailsListUtilities';
-import { songs, toggleSongInclude } from './musicSlice';
+import { songs, toggleActive } from './musicSlice';
+import ActiveCheckbox from './ActiveCheckbox';
 
 /**
  * Get the component that should be used for a particular column's items
@@ -28,8 +29,7 @@ import { songs, toggleSongInclude } from './musicSlice';
  */
 const getFieldAdjustedComponent = (
   songData: SongData,
-  field: TypedProperty,
-  dispatch: React.Dispatch<any>
+  field: TypedProperty
 ) => {
   const fieldValue = Reflect.get(songData, field.name);
   let itemComponent;
@@ -42,21 +42,8 @@ const getFieldAdjustedComponent = (
         </span>
       );
       break;
-    case 'include':
-      itemComponent = (
-        <Checkbox
-          checked={Boolean(fieldValue)}
-          boxSide="end"
-          styles={{
-            root: {
-              marginLeft: '0.75em',
-            },
-          }}
-          onChange={() => {
-            dispatch(toggleSongInclude(songData));
-          }}
-        />
-      );
+    case 'active':
+      itemComponent = <ActiveCheckbox song={songData} />;
       break;
     default:
       itemComponent = <span>{`${fieldValue}`}</span>;
@@ -65,33 +52,11 @@ const getFieldAdjustedComponent = (
 };
 
 /**
- * Get a new IColumn array infused with redux store data
- * @param columns IColumn array
- * @param dispatch react-redux dispatch function
- */
-const getReduxAugmentedColumns = (
-  columns: IColumn[],
-  dispatch: React.Dispatch<any>
-): IColumn[] => {
-  return columns.map((column) => ({
-    ...column,
-    onRender: (item: SongData) => {
-      return getFieldAdjustedComponent(
-        item,
-        { name: column.fieldName, dataType: column.data } as TypedProperty,
-        dispatch
-      );
-    },
-  }));
-};
-
-/**
  * CSVDataList - An DetailsList wrapper to represent music_collection csv data
  */
 const CSVDataList = (): React.ReactElement => {
   // Get song data from redux store
   const songData = useSelector(songs);
-  const dispatch = useDispatch();
 
   // const items = getDummySongData();
   const items = songData;
@@ -109,8 +74,16 @@ const CSVDataList = (): React.ReactElement => {
       : // Song data was loaded - use the columns from the file
         getColumnsFromObjectArray(items);
 
-  // Infuse columns with redux state
-  columns = getReduxAugmentedColumns(columns, dispatch);
+  // Adjust how columns render based on their data
+  columns = columns.map((column) => ({
+    ...column,
+    onRender: (item: SongData) => {
+      return getFieldAdjustedComponent(item, {
+        name: column.fieldName,
+        dataType: column.data,
+      } as TypedProperty);
+    },
+  }));
 
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
     props,

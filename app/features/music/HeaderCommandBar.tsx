@@ -42,10 +42,10 @@ const HeaderCommandBar = (): React.ReactElement => {
     },
 
     {
-      key: 'share',
+      key: 'save',
       text: 'Save CSV',
       iconProps: { iconName: 'PromotedDatabase' },
-      onClick: () => console.log('Share'),
+      onClick: () => console.log('Save'),
       disabled: true,
     },
     {

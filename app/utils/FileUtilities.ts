@@ -56,7 +56,8 @@ const getFileContents = (filePath: string): string | undefined => {
 
 // eslint-disable-next-line import/prefer-default-export
 export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
-  const data = Papa.parse(getFileContents(filePath))?.data || [];
+  const data = (Papa.parse(getFileContents(filePath))?.data ||
+    []) as string[][];
   console.log('Retrieved Data');
 
   // First row is the header row
@@ -77,5 +78,7 @@ export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
     throw new Error('No data found in CSV file');
   }
 
-  return datarows.map((row: string[]) => parseSongDataFromCSVRow(row));
+  return datarows.map((row: string[], index: number) =>
+    parseSongDataFromCSVRow(row, index + 1)
+  );
 };
