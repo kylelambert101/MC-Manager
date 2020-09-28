@@ -5,20 +5,18 @@ import {
   CheckboxVisibility,
   IDetailsHeaderProps,
   IDetailsColumnRenderTooltipProps,
-  DetailsListLayoutMode,
   ConstrainMode,
 } from 'office-ui-fabric-react/lib/DetailsList';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { IRenderFunction } from 'office-ui-fabric-react/lib/Utilities';
 import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
-import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 import { getDummySongData, SongData } from '../../utils/CSVUtilities';
 import {
   getColumnsFromObjectArray,
   TypedProperty,
 } from '../../utils/DetailsListUtilities';
-import { songs, toggleActive } from './musicSlice';
+import { songs } from './musicSlice';
 import ActiveCheckbox from './ActiveCheckbox';
 
 /**
@@ -62,28 +60,38 @@ const CSVDataList = (): React.ReactElement => {
   const items = songData;
 
   /*
-   * Since CSV columns are validated to match expected order, the ternary
-   * below should return the same columns for both paths, but I'm leaving it
-   * just in case there is a desire to dynamically show columns in a
-   * non-validated CSV at some point.
+   * Memoizing the columns array in this way prevents it from being recalculated every time a
+   * single datapoint changes, which dramatically improves the performance of such events, e.g.
+   * an `active` checkbox toggle.
+   *
+   * By using only `items.length` in the dependency array, `columns` will be refreshed whenever
+   * a row is added or deleted. However, as ESLint points out, leaving the rest of `items` out
+   * of the dependency list could cause other issues.
+   *
+   * A more robust solution (which is not needed at this moment but may be useful in the future)
+   * would be to process `items` into an object describing the "shape" of the song data, including
+   * things such as field names, field data types, and max/min value lengths for each field. That
+   * object could then be used directly to create `columns` and it would be listed in the dependency
+   * array below rather than `items.length`.
    */
-  let columns: IColumn[] =
-    items.length === 0
-      ? // There is no song data loaded so use dummy data for column population
-        getColumnsFromObjectArray(getDummySongData())
-      : // Song data was loaded - use the columns from the file
-        getColumnsFromObjectArray(items);
-
-  // Adjust how columns render based on their data
-  columns = columns.map((column) => ({
-    ...column,
-    onRender: (item: SongData) => {
-      return getFieldAdjustedComponent(item, {
-        name: column.fieldName,
-        dataType: column.data,
-      } as TypedProperty);
-    },
-  }));
+  const columns: IColumn[] = React.useMemo(() => {
+    const rawColumns =
+      items.length === 0
+        ? // There is no song data loaded so use dummy data for column generation and sizing
+          getColumnsFromObjectArray(getDummySongData())
+        : // Song data was loaded - use the columns from the file
+          getColumnsFromObjectArray(items);
+    // Adjust how columns render based on their data
+    return rawColumns.map((column) => ({
+      ...column,
+      onRender: (item: SongData) => {
+        return getFieldAdjustedComponent(item, {
+          name: column.fieldName,
+          dataType: column.data,
+        } as TypedProperty);
+      },
+    }));
+  }, [items.length]);
 
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
     props,
