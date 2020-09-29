@@ -10,6 +10,7 @@ const musicSlice = createSlice({
     isLoading: false,
     cachedSongs: [] as SongData[],
     songs: [] as SongData[],
+    saveFilePath: '',
   },
   reducers: {
     beginCSVLoad: (state) => {
@@ -40,6 +41,9 @@ const musicSlice = createSlice({
     overwriteCachedSongs: (state) => {
       state.cachedSongs = state.songs;
     },
+    setSaveFilePath: (state, action: PayloadAction<string>) => {
+      state.saveFilePath = action.payload;
+    },
   },
 });
 
@@ -51,6 +55,7 @@ export const {
   toggleActive,
   resetSongsFromCached,
   overwriteCachedSongs,
+  setSaveFilePath,
 } = musicSlice.actions;
 
 /**
@@ -69,6 +74,10 @@ export const loadDataFromCSV = (): AppThunk => {
       dispatch(cancelCSVLoad());
       return;
     }
+
+    // Save the selected file path
+    dispatch(setSaveFilePath(filePath));
+
     // Perform actual data loading
     const result = await loadCSVFile(filePath);
 
@@ -83,3 +92,5 @@ export const isLoadingSelector = (state: RootState) => state.music.isLoading;
 export const songsSelector = (state: RootState) => state.music.songs;
 export const cachedSongsSelector = (state: RootState) =>
   state.music.cachedSongs;
+export const saveFilePathSelector = (state: RootState) =>
+  state.music.saveFilePath;

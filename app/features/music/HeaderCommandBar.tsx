@@ -8,10 +8,13 @@ import { IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import {
   cachedSongsSelector,
   loadDataFromCSV,
+  overwriteCachedSongs,
   resetSongsFromCached,
+  saveFilePathSelector,
   songsSelector,
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import { saveCSVFile } from '../../utils/FileUtilities';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -19,9 +22,15 @@ const HeaderCommandBar = (): React.ReactElement => {
   const dispatch = useDispatch();
   const songs = useSelector(songsSelector);
   const cachedSongs = useSelector(cachedSongsSelector);
+  const savePath = useSelector(saveFilePathSelector);
 
   // Local state for tracking whether cancel dialog is open
   const [cancelDialogIsOpen, setCancelDialogIsOpen] = React.useState(false);
+
+  const dataHasChanged = React.useMemo(
+    () => JSON.stringify(songs) !== JSON.stringify(cachedSongs),
+    [songs, cachedSongs]
+  );
 
   const items: ICommandBarItemProps[] = [
     {
@@ -37,8 +46,13 @@ const HeaderCommandBar = (): React.ReactElement => {
       key: 'save',
       text: 'Save CSV',
       iconProps: { iconName: 'PromotedDatabase' },
-      onClick: () => console.log('Save'),
-      disabled: true,
+      onClick: () => {
+        saveCSVFile(savePath, songs);
+        dispatch(overwriteCachedSongs());
+        // HACK alert was easy here - should be replaced with a toast or modal or some sort
+        alert(`\nAll changes were saved successfully!`);
+      },
+      disabled: !dataHasChanged,
     },
     {
       key: 'newItem',
@@ -54,7 +68,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       onClick: () => {
         setCancelDialogIsOpen(true);
       },
-      disabled: JSON.stringify(songs) === JSON.stringify(cachedSongs),
+      disabled: !dataHasChanged,
     },
   ];
 

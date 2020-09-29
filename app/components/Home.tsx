@@ -1,9 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
-import { ScrollablePane } from 'office-ui-fabric-react/lib/ScrollablePane';
-import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
-import Loader from 'react-loader-spinner';
+import {
+  Fabric,
+  ProgressIndicator,
+  ScrollablePane,
+  Sticky,
+  StickyPositionType,
+} from 'office-ui-fabric-react';
 import HeaderCommandBar from '../features/music/HeaderCommandBar';
 import CSVDataList from '../features/music/CSVDataList';
 import { isLoadingSelector, songsSelector } from '../features/music/musicSlice';
@@ -24,11 +27,7 @@ export default function Home(): JSX.Element {
         <Sticky stickyPosition={StickyPositionType.Header}>
           <HeaderCommandBar />
         </Sticky>
-        {isLoading ? (
-          <Loader type="ThreeDots" color="#00BFFF" height={100} width={100} />
-        ) : (
-          <CSVDataList />
-        )}
+        {isLoading ? <ProgressIndicator barHeight={4} /> : <CSVDataList />}
       </ScrollablePane>
     </Fabric>
   );
