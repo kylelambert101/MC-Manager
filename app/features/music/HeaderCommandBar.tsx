@@ -49,6 +49,8 @@ const HeaderCommandBar = (): React.ReactElement => {
       onClick: () => {
         saveCSVFile(savePath, songs);
         dispatch(overwriteCachedSongs());
+        // HACK alert was easy here - should be replaced with a toast or modal or some sort
+        alert(`\nAll changes were saved successfully!`);
       },
       disabled: !dataHasChanged,
     },
