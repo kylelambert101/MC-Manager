@@ -16,7 +16,7 @@ import {
   getColumnsFromObjectArray,
   TypedProperty,
 } from '../../utils/DetailsListUtilities';
-import { songs } from './musicSlice';
+import { songsSelector } from './musicSlice';
 import ActiveCheckbox from './ActiveCheckbox';
 
 /**
@@ -54,7 +54,7 @@ const getFieldAdjustedComponent = (
  */
 const CSVDataList = (): React.ReactElement => {
   // Get song data from redux store
-  const songData = useSelector(songs);
+  const songData = useSelector(songsSelector);
 
   // const items = getDummySongData();
   const items = songData;
@@ -91,6 +91,7 @@ const CSVDataList = (): React.ReactElement => {
         } as TypedProperty);
       },
     }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items.length]);
 
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (

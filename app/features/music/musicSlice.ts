@@ -54,4 +54,5 @@ export const loadDataFromCSV = (filePath: string): AppThunk => {
 
 export default musicSlice.reducer;
 
-export const songs = (state: RootState) => state.music.songs;
+export const songsSelector = (state: RootState) => state.music.songs;
+export const isLoadingSelector = (state: RootState) => state.music.isLoading;
