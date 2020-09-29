@@ -3,15 +3,22 @@ import {
   CommandBar,
   ICommandBarItemProps,
 } from 'office-ui-fabric-react/lib/CommandBar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IButtonProps } from 'office-ui-fabric-react/lib/Button';
-import { loadDataFromCSV, resetSongsFromCached } from './musicSlice';
+import {
+  cachedSongsSelector,
+  loadDataFromCSV,
+  resetSongsFromCached,
+  songsSelector,
+} from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
 const HeaderCommandBar = (): React.ReactElement => {
   const dispatch = useDispatch();
+  const songs = useSelector(songsSelector);
+  const cachedSongs = useSelector(cachedSongsSelector);
 
   // Local state for tracking whether cancel dialog is open
   const [cancelDialogIsOpen, setCancelDialogIsOpen] = React.useState(false);
@@ -41,12 +48,13 @@ const HeaderCommandBar = (): React.ReactElement => {
       disabled: true,
     },
     {
-      key: 'download',
+      key: 'cancel',
       text: 'Cancel Changes',
       iconProps: { iconName: 'Cancel' },
       onClick: () => {
         setCancelDialogIsOpen(true);
       },
+      disabled: JSON.stringify(songs) === JSON.stringify(cachedSongs),
     },
   ];
 
