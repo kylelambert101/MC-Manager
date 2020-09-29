@@ -1,3 +1,5 @@
+import * as Papa from 'papaparse';
+
 /* NOTE THESE FIELDS MUST MATCH UP TO EXPECTEDCSVCOLUMNORDER BELOW */
 export type SongData = {
   id: number;
@@ -17,7 +19,7 @@ export type SongData = {
   duration: number;
 };
 
-const expectedCSVColumnOrder = [
+export const expectedCSVColumnOrder = [
   'active',
   'date',
   'day',
@@ -87,6 +89,27 @@ export const parseSongDataFromCSVRow = (
     },
     { id: rowNum } // initial value for "song"
   ) as SongData;
+};
+
+export const convertSongDataToCSVRow = (song: SongData): string => {
+  // Create an object with writeable song data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const writeableSong: any = {
+    ...song,
+    // Transform `active` to a number
+    active: Number(song.active),
+    // Zero-pad track_number to two digits or replace NaN with "None"
+    track_number: Number.isNaN(song.track_number)
+      ? 'None'
+      : `${song.track_number}`.padStart(2, '0'),
+    // Replace NaN with "None"
+    track_total: Number.isNaN(song.track_total) ? 'None' : song.track_total,
+  };
+  // Drop ID from the song
+  delete writeableSong.id;
+
+  // Unparse the writeableSong into csv
+  return Papa.unparse([writeableSong], { header: false });
 };
 
 export const getDummySongData = (): SongData[] => {

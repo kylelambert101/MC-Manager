@@ -6,7 +6,13 @@ import {
   SongData,
   parseSongDataFromCSVRow,
   isCSVHeaderValid,
+  expectedCSVColumnOrder,
+  convertSongDataToCSVRow,
 } from './CSVUtilities';
+import { convertToTitleCase } from './StringUtilities';
+
+// Default file encoding to use for read/write
+const encoding = 'utf8';
 
 export const selectFileToLoad = async (): Promise<string | undefined> => {
   // Use remote dialog because this won't run from main thread
@@ -40,8 +46,7 @@ const getFileContents = (filePath: string): string | undefined => {
   //   encoding = 'utf-8';
   //   console.log(`No encoding detected. Using default "${encoding}".`);
   // }
-  // For now use ascii because that's how my collection file is encoded
-  const encoding = 'ascii';
+
   let results;
   try {
     results = fs.readFileSync(filePath, encoding);
@@ -56,9 +61,9 @@ const getFileContents = (filePath: string): string | undefined => {
 
 // eslint-disable-next-line import/prefer-default-export
 export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
+  // TODO This function freezes the page for large files - can it be extracted to a worker thread?
   const data = (Papa.parse(getFileContents(filePath))?.data ||
     []) as string[][];
-  console.log('Retrieved Data');
 
   // First row is the header row
   const [header, ...datarows] = data;
@@ -81,4 +86,28 @@ export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
   return datarows.map((row: string[], index: number) =>
     parseSongDataFromCSVRow(row, index + 1)
   );
+};
+
+export const saveCSVFile = (targetPath: string, songData: SongData[]): void => {
+  // Create headers using expectedCSVColumnOrder as a base
+  const headers = expectedCSVColumnOrder
+    .map((header) =>
+      convertToTitleCase(header.replaceAll('_', ' ')).replaceAll(' ', '_')
+    )
+    .join(',');
+
+  const csvData = [
+    // Add the headers first
+    headers,
+    // Then add csv rows for each song
+    ...songData.map((song) => convertSongDataToCSVRow(song)),
+  ].join('\n');
+
+  try {
+    fs.writeFileSync(targetPath, csvData, { encoding });
+  } catch (err) {
+    console.log(`Error writing data to ${targetPath}`);
+    console.log(csvData);
+    throw err;
+  }
 };
