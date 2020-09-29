@@ -5,28 +5,9 @@ import {
 } from 'office-ui-fabric-react/lib/CommandBar';
 import { useDispatch } from 'react-redux';
 import { IButtonProps } from 'office-ui-fabric-react/lib/Button';
-import { toast } from 'react-toastify';
-import { loadCSVFile, selectFileToLoad } from '../../utils/FileUtilities';
-import { SongData } from '../../utils/CSVUtilities';
 import { loadDataFromCSV } from './musicSlice';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
-
-const handleOpenClick = async (dispatch: React.Dispatch<any>) => {
-  // Open the dialogue
-  const filePath = await selectFileToLoad();
-  if (typeof filePath === 'undefined') {
-    // User cancelled the open dialogue. Take no action
-    console.log('No file selected in open dialogue. Abort load process.');
-    return;
-  }
-  // Tell redux to load the file if one was selected
-  try {
-    dispatch(loadDataFromCSV(filePath));
-  } catch (err) {
-    toast.error(err.message);
-  }
-};
 
 const HeaderCommandBar = (): React.ReactElement => {
   const dispatch = useDispatch();
@@ -35,9 +16,8 @@ const HeaderCommandBar = (): React.ReactElement => {
       key: 'upload',
       text: 'Open CSV',
       iconProps: { iconName: 'Database' },
-      // I should connect this to redux and set csv data state in a callback
       onClick: () => {
-        handleOpenClick(dispatch);
+        dispatch(loadDataFromCSV());
       },
     },
 
