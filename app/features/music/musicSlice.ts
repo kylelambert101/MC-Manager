@@ -6,7 +6,11 @@ import { loadCSVFile, selectFileToLoad } from '../../utils/FileUtilities';
 
 const musicSlice = createSlice({
   name: 'music',
-  initialState: { songs: [] as SongData[], isLoading: false },
+  initialState: {
+    isLoading: false,
+    cachedSongs: [] as SongData[],
+    songs: [] as SongData[],
+  },
   reducers: {
     beginCSVLoad: (state) => {
       state.isLoading = true;
@@ -18,6 +22,7 @@ const musicSlice = createSlice({
       // -> May represent a "Cancel" of load file dialogue
       if (typeof songData !== 'undefined') {
         state.songs = songData;
+        state.cachedSongs = songData;
       }
     },
     cancelCSVLoad: (state) => {
@@ -29,6 +34,12 @@ const musicSlice = createSlice({
         s.id === targetSong.id ? { ...s, active: !s.active } : s
       );
     },
+    resetSongsFromCached: (state) => {
+      state.songs = state.cachedSongs;
+    },
+    overwriteCachedSongs: (state) => {
+      state.cachedSongs = state.songs;
+    },
   },
 });
 
@@ -36,7 +47,11 @@ const musicSlice = createSlice({
 const { beginCSVLoad, receiveCSVLoad, cancelCSVLoad } = musicSlice.actions;
 
 // Actions exported for use elsewhere
-export const { toggleActive } = musicSlice.actions;
+export const {
+  toggleActive,
+  resetSongsFromCached,
+  overwriteCachedSongs,
+} = musicSlice.actions;
 
 /**
  * Load data from a music_collection csv file into the redux store
@@ -64,5 +79,7 @@ export const loadDataFromCSV = (): AppThunk => {
 
 export default musicSlice.reducer;
 
-export const songsSelector = (state: RootState) => state.music.songs;
 export const isLoadingSelector = (state: RootState) => state.music.isLoading;
+export const songsSelector = (state: RootState) => state.music.songs;
+export const cachedSongsSelector = (state: RootState) =>
+  state.music.cachedSongs;
