@@ -5,12 +5,17 @@ import {
 } from 'office-ui-fabric-react/lib/CommandBar';
 import { useDispatch } from 'react-redux';
 import { IButtonProps } from 'office-ui-fabric-react/lib/Button';
-import { loadDataFromCSV } from './musicSlice';
+import { loadDataFromCSV, resetSongsFromCached } from './musicSlice';
+import ConfirmDialog from '../../components/ConfirmDialog';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
 const HeaderCommandBar = (): React.ReactElement => {
   const dispatch = useDispatch();
+
+  // Local state for tracking whether cancel dialog is open
+  const [cancelDialogIsOpen, setCancelDialogIsOpen] = React.useState(false);
+
   const items: ICommandBarItemProps[] = [
     {
       key: 'upload',
@@ -39,8 +44,9 @@ const HeaderCommandBar = (): React.ReactElement => {
       key: 'download',
       text: 'Cancel Changes',
       iconProps: { iconName: 'Cancel' },
-      onClick: () => console.log('Download'),
-      disabled: true,
+      onClick: () => {
+        setCancelDialogIsOpen(true);
+      },
     },
   ];
 
@@ -100,6 +106,14 @@ const HeaderCommandBar = (): React.ReactElement => {
         overflowButtonProps={overflowProps}
         farItems={farItems}
         ariaLabel="Use left and right arrow keys to navigate between commands"
+      />
+      <ConfirmDialog
+        visible={cancelDialogIsOpen}
+        setVisible={setCancelDialogIsOpen}
+        message="Are you sure you want to discard all changes?"
+        onConfirm={() => {
+          dispatch(resetSongsFromCached());
+        }}
       />
     </div>
   );
