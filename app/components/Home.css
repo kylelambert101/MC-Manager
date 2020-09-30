@@ -2,6 +2,7 @@
   text-align: center;
   font-weight: 600;
   color: rgb(37, 37, 37);
+  background-color: rgb(255, 255, 255);
 
   /* See https://www.electronjs.org/docs/api/frameless-window#draggable-region */
   -webkit-app-region: drag;
