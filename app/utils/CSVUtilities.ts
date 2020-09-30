@@ -20,7 +20,7 @@ export type SongData = {
   duration: number;
 };
 
-interface SongDataColumn {
+export interface SongDataColumn {
   name: string;
   displayName: string;
   csvHeaderName: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { IColumn } from 'office-ui-fabric-react/lib/DetailsList';
-import { SongData } from './CSVUtilities';
+import { SongData, SongDataColumn } from './CSVUtilities';
 import { getUniqueValuesByField } from './ArrayUtilities';
 import { convertToTitleCase } from './StringUtilities';
 import { getProperties, TypedProperty } from './ObjectUtilities';
@@ -13,8 +13,8 @@ import songDataFields from '../constants/songDataFields.json';
 export const getDisplayName = (field: string): string => {
   // Try to find a matching song data field and use its displayName
   const matchingSongDataField = Object.keys(songDataFields)
-    .map((k) => Reflect.get(songDataFields, k))
-    .find((f) => f.fieldName === field);
+    .map((k) => Reflect.get(songDataFields, k) as SongDataColumn)
+    .find((f) => f.name === field);
   if (matchingSongDataField) {
     return matchingSongDataField.displayName;
   }

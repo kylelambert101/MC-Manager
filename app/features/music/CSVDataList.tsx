@@ -12,12 +12,11 @@ import { IRenderFunction } from 'office-ui-fabric-react/lib/Utilities';
 import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 import { getDummySongData, SongData } from '../../utils/CSVUtilities';
-import {
-  getColumnsFromObjectArray,
-  TypedProperty,
-} from '../../utils/DetailsListUtilities';
+import { getColumnsFromObjectArray } from '../../utils/DetailsListUtilities';
 import { songsSelector } from './musicSlice';
 import ActiveCheckbox from './ActiveCheckbox';
+import songDataFields from '../../constants/songDataFields.json';
+import { TypedProperty } from '../../utils/ObjectUtilities';
 
 /**
  * Get the component that should be used for a particular column's items
@@ -32,15 +31,14 @@ const getFieldAdjustedComponent = (
   const fieldValue = Reflect.get(songData, field.name);
   let itemComponent;
   switch (field.name) {
-    // ID Column
-    case 'id':
+    case songDataFields.ID.name:
       itemComponent = (
         <span style={{ fontFamily: 'monospace', color: 'grey' }}>
           <>{`${fieldValue}`}</>
         </span>
       );
       break;
-    case 'active':
+    case songDataFields.ACTIVE.name:
       itemComponent = <ActiveCheckbox song={songData} />;
       break;
     default:
