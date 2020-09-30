@@ -91,6 +91,7 @@ export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
 export const saveCSVFile = (targetPath: string, songData: SongData[]): void => {
   // Create headers using expectedCSVColumnOrder as a base
   const headers = expectedCSVColumnOrder
+    .map((column) => column.name)
     .map((header) =>
       convertToTitleCase(header.replaceAll('_', ' ')).replaceAll(' ', '_')
     )

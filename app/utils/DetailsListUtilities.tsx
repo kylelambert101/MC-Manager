@@ -3,27 +3,7 @@ import { IColumn } from 'office-ui-fabric-react/lib/DetailsList';
 import { SongData } from './CSVUtilities';
 import { getUniqueValuesByField } from './ArrayUtilities';
 import { convertToTitleCase } from './StringUtilities';
-
-/**
- * Name and dataType of a property on an object
- */
-export type TypedProperty = {
-  name: string;
-  dataType: string;
-};
-
-/**
- * Get the name and datatype of all properties of an object
- * @param object Object to analyze
- */
-export const getProperties = (
-  object: Record<string, unknown>
-): TypedProperty[] => {
-  return Object.keys(object).map((key) => ({
-    name: key,
-    dataType: typeof object[key],
-  }));
-};
+import { getProperties, TypedProperty } from './ObjectUtilities';
 
 /**
  * Get the display name associated with this `field`

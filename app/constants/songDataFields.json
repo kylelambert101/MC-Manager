@@ -1,0 +1,77 @@
+{
+  "ACTIVE": {
+    "name": "active",
+    "displayName": "Active",
+    "dataType": "boolean"
+  },
+  "ALBUM": {
+    "name": "album",
+    "displayName": "Album",
+    "dataType": "string"
+  },
+  "ALBUM_ARTIST": {
+    "name": "album_artist",
+    "displayName": "Album Artist",
+    "dataType": "string"
+  },
+  "ARTIST": {
+    "name": "artist",
+    "displayName": "Artist",
+    "dataType": "string"
+  },
+  "DATE": {
+    "name": "date",
+    "displayName": "Date",
+    "dataType": "string"
+  },
+  "DAY": {
+    "name": "day",
+    "displayName": "Day",
+    "dataType": "string"
+  },
+  "DURATION": {
+    "name": "duration",
+    "displayName": "Duration",
+    "dataType": "number"
+  },
+  "FILE_EXTENSION": {
+    "name": "file_extension",
+    "displayName": "File Extension",
+    "dataType": "string"
+  },
+  "ID": {
+    "name": "id",
+    "displayName": "ID",
+    "dataType": "number"
+  },
+  "NEW_FILE_NAME": {
+    "name": "new_file_name",
+    "displayName": "New File Name",
+    "dataType": "string"
+  },
+  "ORIGINAL_FILE_NAME": {
+    "name": "original_file_name",
+    "displayName": "Original File Name",
+    "dataType": "string"
+  },
+  "ORIGINAL_FILE_PATH": {
+    "name": "original_file_path",
+    "displayName": "Original File Path",
+    "dataType": "string"
+  },
+  "TITLE": {
+    "name": "title",
+    "displayName": "Title",
+    "dataType": "string"
+  },
+  "TRACK_NUMBER": {
+    "name": "track_number",
+    "displayName": "Track Number",
+    "dataType": "number"
+  },
+  "TRACK_TOTAL": {
+    "name": "track_total",
+    "displayName": "Track Total",
+    "dataType": "number"
+  }
+}
