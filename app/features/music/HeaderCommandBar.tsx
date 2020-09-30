@@ -137,6 +137,8 @@ const HeaderCommandBar = (): React.ReactElement => {
         visible={cancelDialogIsOpen}
         setVisible={setCancelDialogIsOpen}
         message="Are you sure you want to discard all changes?"
+        confirmAltText="Yes, discard!"
+        cancelAltText="No, go back!"
         onConfirm={() => {
           dispatch(resetSongsFromCached());
           addToast('Changes discarded', { appearance: 'info' });
