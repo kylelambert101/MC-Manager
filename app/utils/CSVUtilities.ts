@@ -1,6 +1,7 @@
 import * as Papa from 'papaparse';
+import songDataFields from '../constants/songDataFields.json';
+import { getProperties } from './ObjectUtilities';
 
-/* NOTE THESE FIELDS MUST MATCH UP TO EXPECTEDCSVCOLUMNORDER BELOW */
 export type SongData = {
   id: number;
   active: boolean;
@@ -19,28 +20,35 @@ export type SongData = {
   duration: number;
 };
 
-export const expectedCSVColumnOrder = [
-  'active',
-  'date',
-  'day',
-  'title',
-  'new_file_name',
-  'original_file_name',
-  'original_file_path',
-  'file_extension',
-  'artist',
-  'album',
-  'album_artist',
-  'track_number',
-  'track_total',
-  'duration',
+export interface SongDataColumn {
+  name: string;
+  displayName: string;
+  csvHeaderName: string;
+  dataType: string;
+}
+
+export const expectedCSVColumnOrder: SongDataColumn[] = [
+  songDataFields.ACTIVE,
+  songDataFields.DATE,
+  songDataFields.DAY,
+  songDataFields.TITLE,
+  songDataFields.NEW_FILE_NAME,
+  songDataFields.ORIGINAL_FILE_NAME,
+  songDataFields.ORIGINAL_FILE_PATH,
+  songDataFields.FILE_EXTENSION,
+  songDataFields.ARTIST,
+  songDataFields.ALBUM,
+  songDataFields.ALBUM_ARTIST,
+  songDataFields.TRACK_NUMBER,
+  songDataFields.TRACK_TOTAL,
+  songDataFields.DURATION,
 ];
 
 export const isCSVHeaderValid = (header: string[]): boolean => {
-  // Check whether header string matches expected column order, ignoring case
+  // Check whether header string matches expected column order
   return (
-    JSON.stringify(header).toLowerCase() ===
-    JSON.stringify(expectedCSVColumnOrder).toLowerCase()
+    JSON.stringify(header) ===
+    JSON.stringify(expectedCSVColumnOrder.map((column) => column.csvHeaderName))
   );
 };
 
@@ -60,23 +68,13 @@ export const parseSongDataFromCSVRow = (
   return csvRow.reduce(
     (song, value, index) => {
       const targetField = expectedCSVColumnOrder[index];
-      // Optionally parse value as a different type for some fields
-      // This cleanup should maybe be in its own function...
+      // Parse values based on field dataType
       let cleanedValue;
-      switch (targetField) {
-        // case 'date':
-        //   cleanedValue = new Date(value);
-        //   break;
-        case 'track_number':
+      switch (targetField.dataType) {
+        case 'number':
           cleanedValue = Number(value);
           break;
-        case 'track_total':
-          cleanedValue = Number(value);
-          break;
-        case 'duration':
-          cleanedValue = Number(value);
-          break;
-        case 'active':
+        case 'boolean':
           cleanedValue = Boolean(Number(value));
           break;
         default:
@@ -84,7 +82,7 @@ export const parseSongDataFromCSVRow = (
       }
       return {
         ...song,
-        [targetField]: cleanedValue,
+        [targetField.name]: cleanedValue,
       };
     },
     { id: rowNum } // initial value for "song"
@@ -92,23 +90,39 @@ export const parseSongDataFromCSVRow = (
 };
 
 export const convertSongDataToCSVRow = (song: SongData): string => {
-  // Create an object with writeable song data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const writeableSong: any = {
-    ...song,
-    // Transform `active` to a number
-    active: Number(song.active),
-    // Zero-pad track_number to two digits or replace NaN with "None"
-    track_number: Number.isNaN(song.track_number)
-      ? 'None'
-      : `${song.track_number}`.padStart(2, '0'),
-    // Replace NaN with "None"
-    track_total: Number.isNaN(song.track_total) ? 'None' : song.track_total,
-  };
-  // Drop ID from the song
-  delete writeableSong.id;
+  // Translate song into an object with writeable CSV data by getting song's properties
+  // and conditionally transforming or removing them
+  const writeableSong = getProperties(song).reduce((wSong, typedProperty) => {
+    // Unpack property information
+    const { name: fieldName, dataType: fieldDataType } = typedProperty;
+    // Get the value of this field from `song`
+    const fieldValue = Reflect.get(song, typedProperty.name);
 
-  // Unparse the writeableSong into csv
+    // Transform the value based on field datatype
+    let cleanedValue;
+    switch (fieldDataType) {
+      case 'number':
+        // Replace "NaN" with "None" for number fields
+        cleanedValue = Number.isNaN(fieldValue) ? 'None' : fieldValue;
+        break;
+      case 'boolean':
+        // Convert boolean fields back to numbers
+        cleanedValue = Number(fieldValue);
+        break;
+      default:
+        cleanedValue = fieldValue;
+    }
+
+    // Only add this field to the writeableSong if it is an expected column
+    return expectedCSVColumnOrder.some((column) => column.name === fieldName)
+      ? {
+          ...wSong,
+          [typedProperty.name]: cleanedValue,
+        }
+      : wSong;
+  }, {});
+
+  // Convert writeableSong to a CSV string with no header
   return Papa.unparse([writeableSong], { header: false });
 };
 

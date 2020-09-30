@@ -1,44 +1,25 @@
 import React from 'react';
 import { IColumn } from 'office-ui-fabric-react/lib/DetailsList';
-import { SongData } from './CSVUtilities';
+import { SongData, SongDataColumn } from './CSVUtilities';
 import { getUniqueValuesByField } from './ArrayUtilities';
 import { convertToTitleCase } from './StringUtilities';
-
-/**
- * Name and dataType of a property on an object
- */
-export type TypedProperty = {
-  name: string;
-  dataType: string;
-};
-
-/**
- * Get the name and datatype of all properties of an object
- * @param object Object to analyze
- */
-export const getProperties = (
-  object: Record<string, unknown>
-): TypedProperty[] => {
-  return Object.keys(object).map((key) => ({
-    name: key,
-    dataType: typeof object[key],
-  }));
-};
+import { getProperties, TypedProperty } from './ObjectUtilities';
+import songDataFields from '../constants/songDataFields.json';
 
 /**
  * Get the display name associated with this `field`
  * @param field Field to convert to a display name
  */
 export const getDisplayName = (field: string): string => {
-  let displayName;
-  switch (field) {
-    case 'id':
-      displayName = 'ID';
-      break;
-    default:
-      displayName = convertToTitleCase(field.replace(/_/g, ' '));
+  // Try to find a matching song data field and use its displayName
+  const matchingSongDataField = Object.keys(songDataFields)
+    .map((k) => Reflect.get(songDataFields, k) as SongDataColumn)
+    .find((f) => f.name === field);
+  if (matchingSongDataField) {
+    return matchingSongDataField.displayName;
   }
-  return displayName;
+  // By default, convert the field to titlecase and replace underscores with spaces
+  return convertToTitleCase(field.replace(/_/g, ' '));
 };
 
 /**
