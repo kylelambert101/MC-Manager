@@ -5,6 +5,7 @@ import {
 } from 'office-ui-fabric-react/lib/CommandBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { IButtonProps } from 'office-ui-fabric-react/lib/Button';
+import { useToasts } from 'react-toast-notifications';
 import {
   cachedSongsSelector,
   loadDataFromCSV,
@@ -23,6 +24,8 @@ const HeaderCommandBar = (): React.ReactElement => {
   const songs = useSelector(songsSelector);
   const cachedSongs = useSelector(cachedSongsSelector);
   const savePath = useSelector(saveFilePathSelector);
+
+  const { addToast } = useToasts();
 
   // Local state for tracking whether cancel dialog is open
   const [cancelDialogIsOpen, setCancelDialogIsOpen] = React.useState(false);
@@ -49,8 +52,9 @@ const HeaderCommandBar = (): React.ReactElement => {
       onClick: () => {
         saveCSVFile(savePath, songs);
         dispatch(overwriteCachedSongs());
-        // HACK alert was easy here - should be replaced with a toast or modal or some sort
-        alert(`\nAll changes were saved successfully!`);
+        addToast(`Successfully saved changes to ${savePath}`, {
+          appearance: 'success',
+        });
       },
       disabled: !dataHasChanged,
     },
@@ -135,6 +139,7 @@ const HeaderCommandBar = (): React.ReactElement => {
         message="Are you sure you want to discard all changes?"
         onConfirm={() => {
           dispatch(resetSongsFromCached());
+          addToast('Changes discarded', { appearance: 'info' });
         }}
       />
     </div>
