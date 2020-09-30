@@ -23,6 +23,7 @@ export type SongData = {
 interface SongDataColumn {
   name: string;
   displayName: string;
+  csvHeaderName: string;
   dataType: string;
 }
 
@@ -44,12 +45,10 @@ export const expectedCSVColumnOrder: SongDataColumn[] = [
 ];
 
 export const isCSVHeaderValid = (header: string[]): boolean => {
-  // Check whether header string matches expected column order, ignoring case
+  // Check whether header string matches expected column order
   return (
-    JSON.stringify(header).toLowerCase() ===
-    JSON.stringify(
-      expectedCSVColumnOrder.map((column) => column.name)
-    ).toLowerCase()
+    JSON.stringify(header) ===
+    JSON.stringify(expectedCSVColumnOrder.map((column) => column.csvHeaderName))
   );
 };
 

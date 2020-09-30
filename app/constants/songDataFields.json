@@ -1,77 +1,92 @@
 {
   "ACTIVE": {
-    "name": "active",
+    "csvHeaderName": "Active",
+    "dataType": "boolean",
     "displayName": "Active",
-    "dataType": "boolean"
+    "name": "active"
   },
   "ALBUM": {
-    "name": "album",
+    "csvHeaderName": "Album",
+    "dataType": "string",
     "displayName": "Album",
-    "dataType": "string"
+    "name": "album"
   },
   "ALBUM_ARTIST": {
-    "name": "album_artist",
+    "csvHeaderName": "Album_Artist",
+    "dataType": "string",
     "displayName": "Album Artist",
-    "dataType": "string"
+    "name": "album_artist"
   },
   "ARTIST": {
-    "name": "artist",
+    "csvHeaderName": "Artist",
+    "dataType": "string",
     "displayName": "Artist",
-    "dataType": "string"
+    "name": "artist"
   },
   "DATE": {
-    "name": "date",
+    "csvHeaderName": "Date",
+    "dataType": "string",
     "displayName": "Date",
-    "dataType": "string"
+    "name": "date"
   },
   "DAY": {
-    "name": "day",
+    "csvHeaderName": "Day",
+    "dataType": "string",
     "displayName": "Day",
-    "dataType": "string"
+    "name": "day"
   },
   "DURATION": {
-    "name": "duration",
+    "csvHeaderName": "Duration",
+    "dataType": "number",
     "displayName": "Duration",
-    "dataType": "number"
+    "name": "duration"
   },
   "FILE_EXTENSION": {
-    "name": "file_extension",
+    "csvHeaderName": "File_Extension",
+    "dataType": "string",
     "displayName": "File Extension",
-    "dataType": "string"
+    "name": "file_extension"
   },
   "ID": {
-    "name": "id",
+    "csvHeaderName": "ID",
+    "dataType": "number",
     "displayName": "ID",
-    "dataType": "number"
+    "name": "id"
   },
   "NEW_FILE_NAME": {
-    "name": "new_file_name",
+    "csvHeaderName": "New_File_Name",
+    "dataType": "string",
     "displayName": "New File Name",
-    "dataType": "string"
+    "name": "new_file_name"
   },
   "ORIGINAL_FILE_NAME": {
-    "name": "original_file_name",
+    "csvHeaderName": "Original_File_Name",
+    "dataType": "string",
     "displayName": "Original File Name",
-    "dataType": "string"
+    "name": "original_file_name"
   },
   "ORIGINAL_FILE_PATH": {
-    "name": "original_file_path",
+    "csvHeaderName": "Original_File_Path",
+    "dataType": "string",
     "displayName": "Original File Path",
-    "dataType": "string"
+    "name": "original_file_path"
   },
   "TITLE": {
-    "name": "title",
+    "csvHeaderName": "Title",
+    "dataType": "string",
     "displayName": "Title",
-    "dataType": "string"
+    "name": "title"
   },
   "TRACK_NUMBER": {
-    "name": "track_number",
+    "csvHeaderName": "Track_Number",
+    "dataType": "number",
     "displayName": "Track Number",
-    "dataType": "number"
+    "name": "track_number"
   },
   "TRACK_TOTAL": {
-    "name": "track_total",
+    "csvHeaderName": "Track_Total",
+    "dataType": "number",
     "displayName": "Track Total",
-    "dataType": "number"
+    "name": "track_total"
   }
 }

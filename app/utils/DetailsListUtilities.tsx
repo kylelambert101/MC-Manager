@@ -4,21 +4,22 @@ import { SongData } from './CSVUtilities';
 import { getUniqueValuesByField } from './ArrayUtilities';
 import { convertToTitleCase } from './StringUtilities';
 import { getProperties, TypedProperty } from './ObjectUtilities';
+import songDataFields from '../constants/songDataFields.json';
 
 /**
  * Get the display name associated with this `field`
  * @param field Field to convert to a display name
  */
 export const getDisplayName = (field: string): string => {
-  let displayName;
-  switch (field) {
-    case 'id':
-      displayName = 'ID';
-      break;
-    default:
-      displayName = convertToTitleCase(field.replace(/_/g, ' '));
+  // Try to find a matching song data field and use its displayName
+  const matchingSongDataField = Object.keys(songDataFields)
+    .map((k) => Reflect.get(songDataFields, k))
+    .find((f) => f.fieldName === field);
+  if (matchingSongDataField) {
+    return matchingSongDataField.displayName;
   }
-  return displayName;
+  // By default, convert the field to titlecase and replace underscores with spaces
+  return convertToTitleCase(field.replace(/_/g, ' '));
 };
 
 /**

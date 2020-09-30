@@ -9,7 +9,6 @@ import {
   expectedCSVColumnOrder,
   convertSongDataToCSVRow,
 } from './CSVUtilities';
-import { convertToTitleCase } from './StringUtilities';
 
 // Default file encoding to use for read/write
 const encoding = 'utf8';
@@ -28,9 +27,8 @@ export const selectFileToLoad = async (): Promise<string | undefined> => {
 const getFileContents = (filePath: string): string | undefined => {
   console.log(`Opening file: "${filePath}"`);
 
-  const fileBuffer = fs.readFileSync(filePath);
-
   // detectCharacterEncoding used native module that was difficult to manage in electron
+  // const fileBuffer = fs.readFileSync(filePath);
   // const detectedEncoding = detectCharacterEncoding(fileBuffer)?.encoding;
   // if (detectedEncoding) {
   //   console.log(`Detected encoding "${detectedEncoding}"`);
@@ -91,10 +89,7 @@ export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
 export const saveCSVFile = (targetPath: string, songData: SongData[]): void => {
   // Create headers using expectedCSVColumnOrder as a base
   const headers = expectedCSVColumnOrder
-    .map((column) => column.name)
-    .map((header) =>
-      convertToTitleCase(header.replaceAll('_', ' ')).replaceAll(' ', '_')
-    )
+    .map((column) => column.csvHeaderName)
     .join(',');
 
   const csvData = [
