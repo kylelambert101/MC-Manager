@@ -1,14 +1,8 @@
-/* .container {
-  position: absolute;
-  top: 30%;
-  left: 10px;
+.titlebar {
   text-align: center;
-}
+  font-weight: 600;
+  color: rgb(37, 37, 37);
 
-.container h2 {
-  font-size: 5rem;
+  /* See https://www.electronjs.org/docs/api/frameless-window#draggable-region */
+  -webkit-app-region: drag;
 }
-
-.container a {
-  font-size: 1.4rem;
-} */

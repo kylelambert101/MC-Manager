@@ -7,12 +7,17 @@ import {
   Sticky,
   StickyPositionType,
 } from 'office-ui-fabric-react';
+import styles from './Home.css';
 import HeaderCommandBar from '../features/music/HeaderCommandBar';
 import CSVDataList from '../features/music/CSVDataList';
-import { isLoadingSelector, songsSelector } from '../features/music/musicSlice';
+import {
+  isLoadingSelector,
+  saveFilePathSelector,
+} from '../features/music/musicSlice';
 
 export default function Home(): JSX.Element {
   const isLoading = useSelector(isLoadingSelector);
+  const filePath = useSelector(saveFilePathSelector);
   return (
     <Fabric
       style={{
@@ -25,6 +30,9 @@ export default function Home(): JSX.Element {
     >
       <ScrollablePane>
         <Sticky stickyPosition={StickyPositionType.Header}>
+          <div className={styles.titlebar}>
+            {` MC-Manager${filePath === '' ? '' : ` - ${filePath}`}`}
+          </div>
           <HeaderCommandBar />
         </Sticky>
         {isLoading ? <ProgressIndicator barHeight={4} /> : <CSVDataList />}
