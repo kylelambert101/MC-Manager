@@ -16,6 +16,7 @@ import {
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
+import AddCSVSongsDialog from './AddCSVSongsDialog';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -27,13 +28,16 @@ const HeaderCommandBar = (): React.ReactElement => {
 
   const { addToast } = useToasts();
 
-  // Local state for tracking whether cancel dialog is open
+  // Local state for tracking dialog state
   const [cancelDialogIsOpen, setCancelDialogIsOpen] = React.useState(false);
+  const [addSongDialogIsOpen, setAddSongDialogIsOpen] = React.useState(false);
 
   const dataHasChanged = React.useMemo(
     () => JSON.stringify(songs) !== JSON.stringify(cachedSongs),
     [songs, cachedSongs]
   );
+
+  const fileIsOpen = React.useMemo(() => savePath !== '', [savePath]);
 
   const items: ICommandBarItemProps[] = [
     {
@@ -63,7 +67,10 @@ const HeaderCommandBar = (): React.ReactElement => {
       text: 'Add Songs',
       cacheKey: 'myCacheKey', // changing this key will invalidate this item's cache
       iconProps: { iconName: 'Add' }, // MusicNote is another good option
-      disabled: true,
+      onClick: () => {
+        setAddSongDialogIsOpen(true);
+      },
+      disabled: !fileIsOpen,
     },
     {
       key: 'cancel',
@@ -142,6 +149,13 @@ const HeaderCommandBar = (): React.ReactElement => {
           dispatch(resetSongsFromCached());
           addToast('Changes discarded', { appearance: 'info' });
         }}
+      />
+      <AddCSVSongsDialog
+        title="Add Songs (CSV Text)"
+        message="Paste CSV rows for new songs below."
+        visible={addSongDialogIsOpen}
+        setVisible={setAddSongDialogIsOpen}
+        onSubmit={(s: string) => console.log(`Text submitted: ${s}`)}
       />
     </div>
   );

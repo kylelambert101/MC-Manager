@@ -7,17 +7,21 @@ import {
   IDetailsColumnRenderTooltipProps,
   ConstrainMode,
   DetailsListLayoutMode,
+  IDetailsListStyles,
 } from 'office-ui-fabric-react/lib/DetailsList';
-import { useSelector } from 'react-redux';
 import { IRenderFunction } from 'office-ui-fabric-react/lib/Utilities';
 import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 import { getDummySongData, SongData } from '../../utils/CSVUtilities';
 import { getColumnsFromObjectArray } from '../../utils/DetailsListUtilities';
-import { songsSelector } from './musicSlice';
 import ActiveCheckbox from './ActiveCheckbox';
 import songDataFields from '../../constants/songDataFields.json';
 import { TypedProperty } from '../../utils/ObjectUtilities';
+
+interface ICSVDataListProps {
+  songs: SongData[];
+  onSongChange: (newSong: SongData) => void;
+}
 
 /**
  * Get the component that should be used for a particular column's items
@@ -27,7 +31,8 @@ import { TypedProperty } from '../../utils/ObjectUtilities';
  */
 const getFieldAdjustedComponent = (
   songData: SongData,
-  field: TypedProperty
+  field: TypedProperty,
+  onChange: (songData: SongData) => void
 ) => {
   const fieldValue = Reflect.get(songData, field.name);
   let itemComponent;
@@ -40,7 +45,14 @@ const getFieldAdjustedComponent = (
       );
       break;
     case songDataFields.ACTIVE.name:
-      itemComponent = <ActiveCheckbox song={songData} />;
+      itemComponent = (
+        <ActiveCheckbox
+          active={songData.active}
+          onChange={(newValue: boolean) => {
+            onChange({ ...songData, active: newValue });
+          }}
+        />
+      );
       break;
     default:
       itemComponent = <span>{`${fieldValue}`}</span>;
@@ -51,12 +63,11 @@ const getFieldAdjustedComponent = (
 /**
  * CSVDataList - An DetailsList wrapper to represent music_collection csv data
  */
-const CSVDataList = (): React.ReactElement => {
-  // Get song data from redux store
-  const songData = useSelector(songsSelector);
+const CSVDataList = (props: ICSVDataListProps): React.ReactElement => {
+  const { songs, onSongChange } = props;
 
   // const items = getDummySongData();
-  const items = songData;
+  const items = songs;
 
   /*
    * Memoizing the columns array in this way prevents it from being recalculated every time a
@@ -84,20 +95,24 @@ const CSVDataList = (): React.ReactElement => {
     return rawColumns.map((column) => ({
       ...column,
       onRender: (item: SongData) => {
-        return getFieldAdjustedComponent(item, {
-          name: column.fieldName,
-          dataType: column.data,
-        } as TypedProperty);
+        return getFieldAdjustedComponent(
+          item,
+          {
+            name: column.fieldName,
+            dataType: column.data,
+          } as TypedProperty,
+          onSongChange
+        );
       },
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items.length]);
 
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
-    props,
+    headerProps,
     defaultRender
   ) => {
-    if (!props || !defaultRender) {
+    if (!headerProps || !defaultRender) {
       return null;
     }
     // This tooltip stuff keeps headers aligned with columns during horizontal scroll
@@ -108,7 +123,9 @@ const CSVDataList = (): React.ReactElement => {
     return (
       <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
         {defaultRender({
-          ...props,
+          ...headerProps,
+          // Get this useless 16px padding out of here
+          styles: { root: { paddingTop: 0 } },
           onRenderColumnHeaderTooltip,
         })}
       </Sticky>

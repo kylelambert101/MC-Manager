@@ -35,6 +35,12 @@ const musicSlice = createSlice({
         s.id === targetSong.id ? { ...s, active: !s.active } : s
       );
     },
+    updateSong: (state, action: PayloadAction<SongData>) => {
+      const targetSong = action.payload;
+      state.songs = state.songs.map((s) =>
+        s.id === targetSong.id ? targetSong : s
+      );
+    },
     resetSongsFromCached: (state) => {
       state.songs = state.cachedSongs;
     },
@@ -53,6 +59,7 @@ const { beginCSVLoad, receiveCSVLoad, cancelCSVLoad } = musicSlice.actions;
 // Actions exported for use elsewhere
 export const {
   toggleActive,
+  updateSong,
   resetSongsFromCached,
   overwriteCachedSongs,
   setSaveFilePath,
