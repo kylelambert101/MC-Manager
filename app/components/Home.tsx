@@ -18,25 +18,20 @@ import {
 export default function Home(): JSX.Element {
   const isLoading = useSelector(isLoadingSelector);
   const filePath = useSelector(saveFilePathSelector);
+
+  const windowTitle = `MC-Manager${filePath === '' ? '' : ` - ${filePath}`}`;
+
   return (
-    <Fabric
-      style={{
-        display: 'flex',
-        width: '100%',
-        position: 'absolute',
-        top: '0',
-        bottom: '0',
-      }}
-    >
-      <ScrollablePane>
-        <Sticky stickyPosition={StickyPositionType.Header}>
-          <div className={styles.titlebar}>
-            {` MC-Manager${filePath === '' ? '' : ` - ${filePath}`}`}
-          </div>
-          <HeaderCommandBar />
-        </Sticky>
-        {isLoading ? <ProgressIndicator barHeight={4} /> : <CSVDataList />}
-      </ScrollablePane>
+    <Fabric className={styles.wrapper}>
+      <div className={styles.header}>
+        <div className={styles.titlebar}>{windowTitle}</div>
+        <HeaderCommandBar />
+      </div>
+      <div className={styles.main}>
+        <ScrollablePane>
+          {isLoading ? <ProgressIndicator barHeight={4} /> : <CSVDataList />}
+        </ScrollablePane>
+      </div>
     </Fabric>
   );
 }
