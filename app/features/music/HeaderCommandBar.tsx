@@ -126,7 +126,6 @@ const HeaderCommandBar = (): React.ReactElement => {
   return (
     <div>
       <CommandBar
-        style={{ width: '100vw' }}
         items={items}
         overflowItems={overflowItems}
         overflowButtonProps={overflowProps}
