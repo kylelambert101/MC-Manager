@@ -6,6 +6,7 @@ import {
   IDetailsHeaderProps,
   IDetailsColumnRenderTooltipProps,
   ConstrainMode,
+  DetailsListLayoutMode,
 } from 'office-ui-fabric-react/lib/DetailsList';
 import { useSelector } from 'react-redux';
 import { IRenderFunction } from 'office-ui-fabric-react/lib/Utilities';
@@ -120,6 +121,7 @@ const CSVDataList = (): React.ReactElement => {
       checkboxVisibility={CheckboxVisibility.hidden}
       onRenderDetailsHeader={onRenderDetailsHeader}
       constrainMode={ConstrainMode.unconstrained}
+      layoutMode={DetailsListLayoutMode.fixedColumns}
     />
   );
 };
