@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { Checkbox, ICheckboxProps } from 'office-ui-fabric-react/lib/Checkbox';
-import { useDispatch } from 'react-redux';
-import { SongData } from '../../utils/CSVUtilities';
-import { toggleActive } from './musicSlice';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
 
 interface ActiveCheckboxProps {
-  song: SongData;
+  active: boolean;
+  onChange: (newValue: boolean) => void;
 }
 
 const ActiveCheckbox = (props: ActiveCheckboxProps): React.ReactElement => {
-  const { song } = props;
-  const dispatch = useDispatch();
+  const { active, onChange } = props;
 
   return (
     <Checkbox
-      checked={song.active}
+      checked={active}
       boxSide="end"
       styles={{
         root: {
@@ -22,7 +19,7 @@ const ActiveCheckbox = (props: ActiveCheckboxProps): React.ReactElement => {
         },
       }}
       onChange={() => {
-        dispatch(toggleActive(song));
+        onChange(!active);
       }}
     />
   );

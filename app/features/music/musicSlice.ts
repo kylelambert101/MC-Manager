@@ -35,6 +35,19 @@ const musicSlice = createSlice({
         s.id === targetSong.id ? { ...s, active: !s.active } : s
       );
     },
+    updateSong: (state, action: PayloadAction<SongData>) => {
+      const targetSong = action.payload;
+      state.songs = state.songs.map((s) =>
+        s.id === targetSong.id ? targetSong : s
+      );
+    },
+    addSongs: (state, action: PayloadAction<SongData[]>) => {
+      const newSongs = action.payload;
+      // Add the new songs to state.songs and reassign ids
+      state.songs = [...newSongs, ...state.songs].map((song, index) => {
+        return { ...song, id: index + 1 };
+      });
+    },
     resetSongsFromCached: (state) => {
       state.songs = state.cachedSongs;
     },
@@ -52,7 +65,9 @@ const { beginCSVLoad, receiveCSVLoad, cancelCSVLoad } = musicSlice.actions;
 
 // Actions exported for use elsewhere
 export const {
+  addSongs,
   toggleActive,
+  updateSong,
   resetSongsFromCached,
   overwriteCachedSongs,
   setSaveFilePath,

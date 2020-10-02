@@ -52,10 +52,18 @@ export const isCSVHeaderValid = (header: string[]): boolean => {
   );
 };
 
+export const getCSVRowsFromString = (csvString: string): string[][] => {
+  return Papa.parse(csvString)?.data || ([] as string[][]);
+};
+
 export const parseSongDataFromCSVRow = (
   csvRow: string[],
   rowNum: number
-): SongData => {
+): SongData | undefined => {
+  // If the row doesn't have the right number of columns, don't bother parsing
+  if (csvRow.length !== expectedCSVColumnOrder.length) {
+    return undefined;
+  }
   /*
    * I'm making a couple of assumptions here:
    * 1. Columns are in expected order per expectedCSVColumnOrder above
