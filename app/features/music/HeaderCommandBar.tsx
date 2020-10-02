@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { useToasts } from 'react-toast-notifications';
 import {
+  addSongs,
   cachedSongsSelector,
   loadDataFromCSV,
   overwriteCachedSongs,
@@ -17,6 +18,7 @@ import {
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
 import AddCSVSongsDialog from './AddCSVSongsDialog';
+import { SongData } from '../../utils/CSVUtilities';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -155,7 +157,8 @@ const HeaderCommandBar = (): React.ReactElement => {
         message="Paste CSV rows for new songs below."
         visible={addSongDialogIsOpen}
         setVisible={setAddSongDialogIsOpen}
-        onSubmit={() => console.log('AddCSVSongsDialog onSubmit TBI')}
+        onSubmit={(newSongs: SongData[]) => dispatch(addSongs(newSongs))}
+        existingSongs={songs}
       />
     </div>
   );

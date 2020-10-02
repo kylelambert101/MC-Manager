@@ -31,14 +31,23 @@ interface Props {
    */
   setVisible: (visible: boolean) => void;
 
-  onSubmit: (text: string) => void;
+  existingSongs: SongData[];
+  onSubmit: (newSongs: SongData[]) => void;
   onCancel?: () => void;
   title?: string;
   message?: string;
 }
 
 const AddCSVSongsDialog = (props: Props): React.ReactElement => {
-  const { visible, setVisible, onSubmit, onCancel, title, message } = props;
+  const {
+    visible,
+    setVisible,
+    onSubmit,
+    onCancel,
+    title,
+    message,
+    existingSongs,
+  } = props;
 
   const [csvInput, setCSVInput] = React.useState([] as string[][]);
   const [parsedSongs, setParsedSongs] = React.useState([] as SongData[]);
@@ -73,7 +82,8 @@ const AddCSVSongsDialog = (props: Props): React.ReactElement => {
 
   const handleSubmit = () => {
     setVisible(false);
-    onSubmit('');
+    onSubmit(parsedSongs);
+    setCSVInput([]);
   };
 
   const handleCancel = () => {
@@ -138,6 +148,15 @@ const AddCSVSongsDialog = (props: Props): React.ReactElement => {
         .join('; ')}`;
     }
 
+    const songsAlreadyInFile = newFileNames.filter((fileName) => {
+      return existingSongs.some((song) => song.new_file_name === fileName);
+    });
+    if (songsAlreadyInFile.length > 0) {
+      return `Duplicate data detected: ${songsAlreadyInFile.map(
+        (s) => `"${s}" already exists in the dataset.`
+      )}`;
+    }
+
     return '';
   };
 
@@ -156,10 +175,7 @@ const AddCSVSongsDialog = (props: Props): React.ReactElement => {
         onGetErrorMessage={getErrorMessage}
       />
       <h3>Parsed Songs:</h3>
-      <CSVDataList
-        songs={parsedSongs}
-        onSongChange={(s) => console.log('TBD')}
-      />
+      <CSVDataList songs={parsedSongs} onSongChange={(): boolean => false} />
       <DialogFooter>
         <Stack
           horizontal
