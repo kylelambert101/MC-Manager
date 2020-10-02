@@ -12,7 +12,13 @@ import {
   Label,
 } from 'office-ui-fabric-react';
 import CSVDataList from './CSVDataList';
-import { getDummySongData } from '../../utils/CSVUtilities';
+import {
+  getCSVRowsFromString,
+  parseSongDataFromCSVRow,
+  SongData,
+} from '../../utils/CSVUtilities';
+import songDataFields from '../../constants/songDataFields.json';
+import { areIdenticalArrays } from '../../utils/ArrayUtilities';
 
 interface Props {
   /**
@@ -34,6 +40,30 @@ interface Props {
 const AddCSVSongsDialog = (props: Props): React.ReactElement => {
   const { visible, setVisible, onSubmit, onCancel, title, message } = props;
 
+  const [csvInput, setCSVInput] = React.useState([] as string[][]);
+  const [parsedSongs, setParsedSongs] = React.useState([] as SongData[]);
+
+  React.useEffect(() => {
+    const songs: SongData[] = csvInput
+      .map((row, index) => parseSongDataFromCSVRow(row, index + 1))
+      // Filter out cases where row could not be parsed
+      .filter((song) => typeof song !== 'undefined') as SongData[];
+
+    const validSongs: SongData[] = songs.filter((song) => {
+      return (
+        // Song field set must exactly match defined songDataFields
+        areIdenticalArrays(
+          Object.keys(song),
+          Object.keys(songDataFields).map(
+            (field) => Reflect.get(songDataFields, field).name
+          ),
+          { ignoreOrder: true }
+        )
+      );
+    });
+    setParsedSongs(validSongs);
+  }, [csvInput, setParsedSongs]);
+
   const dialogContentProps: IDialogContentProps = {
     type: DialogType.normal,
     title: title || '',
@@ -45,24 +75,89 @@ const AddCSVSongsDialog = (props: Props): React.ReactElement => {
     setVisible(false);
     onSubmit('');
   };
+
   const handleCancel = () => {
     setVisible(false);
+    // Clear local state
+    setCSVInput([]);
     if (typeof onCancel !== 'undefined') {
       onCancel();
     }
   };
+
+  const handleTextFieldChange = (
+    event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    newValue?: string
+  ) => {
+    const csvRows = getCSVRowsFromString(newValue || '').filter(
+      // Filter out empty rows
+      (row) => !areIdenticalArrays(row, [''])
+    );
+    if (!areIdenticalArrays(csvInput, csvRows)) {
+      setCSVInput(csvRows);
+    }
+  };
+
+  const getErrorMessage = (): string => {
+    // Check which rows were translated to songs
+    const invalidRowErrors = csvInput
+      .map((row, index) =>
+        parsedSongs.some((song) => song.id === index + 1)
+          ? undefined
+          : { id: index + 1, row }
+      )
+      .filter((item) => typeof item !== 'undefined');
+
+    // Show error if there were any invalid rows
+    if (invalidRowErrors.length > 0) {
+      if (invalidRowErrors.length === 1) {
+        const invalidRow = invalidRowErrors[0];
+        return `Row ${invalidRow?.id} could not be parsed into a song.`;
+      }
+      return `The following rows could not be parsed into songs: ${invalidRowErrors
+        .map((r) => r?.id)
+        .join(', ')}`;
+    }
+    // Show error if there is any duplicate data (keyed on new_file_name)
+    const newFileNames = parsedSongs
+      .map((song) => song.new_file_name)
+      .filter((nfn, index, self) => self.indexOf(nfn) === index);
+
+    if (newFileNames.length !== parsedSongs.length) {
+      const duplicateNames = newFileNames
+        .map((newFileName) => {
+          return {
+            newFileName,
+            count: parsedSongs.filter((s) => s.new_file_name === newFileName)
+              .length,
+          };
+        })
+        .filter((item) => item.count > 1);
+      return `Duplicate data detected. ${duplicateNames
+        .map((n) => `"${n.newFileName}" found ${n.count} times`)
+        .join('; ')}`;
+    }
+
+    return '';
+  };
+
   return (
     <Dialog
       hidden={!visible}
       dialogContentProps={dialogContentProps}
-      onDismiss={() => setVisible(false)}
+      onDismiss={handleCancel}
       minWidth="80%"
       maxWidth="80%"
     >
-      <TextField multiline autoAdjustHeight />
+      <TextField
+        multiline
+        autoAdjustHeight
+        onChange={handleTextFieldChange}
+        onGetErrorMessage={getErrorMessage}
+      />
       <h3>Parsed Songs:</h3>
       <CSVDataList
-        songs={getDummySongData()}
+        songs={parsedSongs}
         onSongChange={(s) => console.log('TBD')}
       />
       <DialogFooter>
@@ -71,7 +166,11 @@ const AddCSVSongsDialog = (props: Props): React.ReactElement => {
           horizontalAlign="center"
           tokens={{ childrenGap: '10px' }}
         >
-          <PrimaryButton onClick={handleSubmit} text="Submit" />
+          <PrimaryButton
+            onClick={handleSubmit}
+            text="Submit"
+            disabled={getErrorMessage() !== ''}
+          />
           <DefaultButton onClick={handleCancel} text="Cancel" />
         </Stack>
       </DialogFooter>

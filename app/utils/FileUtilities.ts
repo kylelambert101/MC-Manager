@@ -1,5 +1,4 @@
 import { remote } from 'electron';
-import * as Papa from 'papaparse';
 import fs from 'fs';
 // import detectCharacterEncoding from 'detect-character-encoding';
 import {
@@ -8,6 +7,7 @@ import {
   isCSVHeaderValid,
   expectedCSVColumnOrder,
   convertSongDataToCSVRow,
+  getCSVRowsFromString,
 } from './CSVUtilities';
 
 // Default file encoding to use for read/write
@@ -60,8 +60,7 @@ const getFileContents = (filePath: string): string | undefined => {
 // eslint-disable-next-line import/prefer-default-export
 export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
   // TODO This function freezes the page for large files - can it be extracted to a worker thread?
-  const data = (Papa.parse(getFileContents(filePath))?.data ||
-    []) as string[][];
+  const data = getCSVRowsFromString(getFileContents(filePath) || '');
 
   // First row is the header row
   const [header, ...datarows] = data;

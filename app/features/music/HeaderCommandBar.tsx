@@ -155,7 +155,7 @@ const HeaderCommandBar = (): React.ReactElement => {
         message="Paste CSV rows for new songs below."
         visible={addSongDialogIsOpen}
         setVisible={setAddSongDialogIsOpen}
-        onSubmit={(s: string) => console.log(`Text submitted: ${s}`)}
+        onSubmit={() => console.log('AddCSVSongsDialog onSubmit TBI')}
       />
     </div>
   );
