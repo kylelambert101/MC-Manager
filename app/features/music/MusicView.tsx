@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Fabric,
+  IColumn,
   ProgressIndicator,
   ScrollablePane,
 } from 'office-ui-fabric-react';
@@ -39,6 +40,12 @@ const MusicView = () => {
               songs={songs}
               onSongChange={(newSong: SongData) => {
                 dispatch(updateSong(newSong));
+              }}
+              onColumnClick={(
+                ev?: React.MouseEvent<HTMLElement>,
+                column?: IColumn
+              ) => {
+                console.log(`sort by ${column?.fieldName}`);
               }}
             />
           )}

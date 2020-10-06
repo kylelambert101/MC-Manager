@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import * as React from 'react';
 import {
   IColumn,
@@ -21,6 +22,10 @@ import { TypedProperty } from '../../utils/ObjectUtilities';
 interface ICSVDataListProps {
   songs: SongData[];
   onSongChange: (newSong: SongData) => void;
+  onColumnClick?: (
+    ev?: React.MouseEvent<HTMLElement>,
+    column?: IColumn
+  ) => void;
 }
 
 /**
@@ -64,7 +69,7 @@ const getFieldAdjustedComponent = (
  * CSVDataList - An DetailsList wrapper to represent music_collection csv data
  */
 const CSVDataList = (props: ICSVDataListProps): React.ReactElement => {
-  const { songs, onSongChange } = props;
+  const { songs, onSongChange, onColumnClick } = props;
 
   // const items = getDummySongData();
   const items = songs;
@@ -104,6 +109,7 @@ const CSVDataList = (props: ICSVDataListProps): React.ReactElement => {
           onSongChange
         );
       },
+      onColumnClick,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items.length]);
