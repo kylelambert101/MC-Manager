@@ -43,3 +43,53 @@ export const areIdenticalArrays = (
   }
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 };
+
+export interface SortField {
+  fieldName: string;
+  direction: 'ascending' | 'descending';
+}
+
+export const sortObjectListByFields = (
+  objList: Record<string, unknown>[],
+  sortFields: SortField[]
+): Record<string, unknown>[] => {
+  const sorter = (
+    obj1: Record<string, unknown>,
+    obj2: Record<string, unknown>
+  ) => {
+    let result = 0;
+    sortFields.reverse().forEach((sortField) => {
+      console.log(
+        `sorting by ${sortField.fieldName} in direction "${sortField.direction}"`
+      );
+      if (
+        // result has not been assigned yet
+        result === 0 &&
+        // Target field values don't match
+        Reflect.get(obj1, sortField.fieldName) !==
+          Reflect.get(obj2, sortField.fieldName)
+      ) {
+        switch (sortField.direction) {
+          case 'ascending':
+            result =
+              Reflect.get(obj1, sortField.fieldName) <
+              Reflect.get(obj2, sortField.fieldName)
+                ? 1
+                : -1;
+            break;
+          case 'descending':
+            result =
+              Reflect.get(obj1, sortField.fieldName) >
+              Reflect.get(obj2, sortField.fieldName)
+                ? 1
+                : -1;
+            break;
+          default:
+            break;
+        }
+      }
+    });
+    return result;
+  };
+  return objList.sort(sorter);
+};

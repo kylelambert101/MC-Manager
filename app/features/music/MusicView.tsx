@@ -14,6 +14,8 @@ import {
   saveFilePathSelector,
   songsSelector,
   updateSong,
+  toggleSortColumn,
+  sortColumnsSelector,
 } from './musicSlice';
 import { SongData } from './MusicTypes';
 
@@ -21,6 +23,7 @@ const MusicView = () => {
   const isLoading = useSelector(isLoadingSelector);
   const filePath = useSelector(saveFilePathSelector);
   const songs = useSelector(songsSelector);
+  const sortColumns = useSelector(sortColumnsSelector);
   const dispatch = useDispatch();
 
   const windowTitle = `MC-Manager${filePath === '' ? '' : ` - ${filePath}`}`;
@@ -45,8 +48,14 @@ const MusicView = () => {
                 ev?: React.MouseEvent<HTMLElement>,
                 column?: IColumn
               ) => {
-                console.log(`sort by ${column?.fieldName}`);
+                if (
+                  typeof column !== 'undefined' &&
+                  typeof column.fieldName !== 'undefined'
+                ) {
+                  dispatch(toggleSortColumn(column.fieldName));
+                }
               }}
+              sortColumns={sortColumns}
             />
           )}
         </ScrollablePane>
