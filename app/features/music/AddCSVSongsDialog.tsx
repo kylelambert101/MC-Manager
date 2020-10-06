@@ -15,8 +15,8 @@ import CSVDataList from './CSVDataList';
 import {
   getCSVRowsFromString,
   parseSongDataFromCSVRow,
-  SongData,
 } from '../../utils/CSVUtilities';
+import { SongData } from './MusicTypes';
 import songDataFields from '../../constants/songDataFields.json';
 import { areIdenticalArrays } from '../../utils/ArrayUtilities';
 

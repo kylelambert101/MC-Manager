@@ -18,7 +18,7 @@ import {
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
 import AddCSVSongsDialog from './AddCSVSongsDialog';
-import { SongData } from '../../utils/CSVUtilities';
+import { SongData } from './MusicTypes';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 

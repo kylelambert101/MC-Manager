@@ -1,8 +1,8 @@
 import { remote } from 'electron';
 import fs from 'fs';
+import { SongData } from '../features/music/MusicTypes';
 // import detectCharacterEncoding from 'detect-character-encoding';
 import {
-  SongData,
   parseSongDataFromCSVRow,
   isCSVHeaderValid,
   expectedCSVColumnOrder,
@@ -58,7 +58,9 @@ const getFileContents = (filePath: string): string | undefined => {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
+export const loadCSVFile = async (
+  filePath: string
+): Promise<(SongData | undefined)[]> => {
   // TODO This function freezes the page for large files - can it be extracted to a worker thread?
   const data = getCSVRowsFromString(getFileContents(filePath) || '');
 

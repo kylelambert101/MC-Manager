@@ -15,7 +15,7 @@ import {
   songsSelector,
   updateSong,
 } from './musicSlice';
-import { SongData } from '../../utils/CSVUtilities';
+import { SongData } from './MusicTypes';
 
 const MusicView = () => {
   const isLoading = useSelector(isLoadingSelector);

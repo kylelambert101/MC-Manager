@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // eslint-disable-next-line import/no-cycle
 import { AppThunk, RootState } from '../../store';
-import { SongData } from '../../utils/CSVUtilities';
+import { SongData } from './MusicTypes';
 import { loadCSVFile, selectFileToLoad } from '../../utils/FileUtilities';
 
 const musicSlice = createSlice({

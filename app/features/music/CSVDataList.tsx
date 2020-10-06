@@ -13,7 +13,8 @@ import {
 import { IRenderFunction } from 'office-ui-fabric-react/lib/Utilities';
 import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
-import { getDummySongData, SongData } from '../../utils/CSVUtilities';
+import { getDummySongData } from '../../utils/CSVUtilities';
+import { SongData } from './MusicTypes';
 import { getColumnsFromObjectArray } from '../../utils/DetailsListUtilities';
 import ActiveCheckbox from './ActiveCheckbox';
 import songDataFields from '../../constants/songDataFields.json';

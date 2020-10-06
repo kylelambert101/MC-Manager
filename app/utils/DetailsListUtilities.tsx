@@ -1,10 +1,10 @@
 import React from 'react';
 import { IColumn } from 'office-ui-fabric-react/lib/DetailsList';
-import { SongData, SongDataColumn } from './CSVUtilities';
 import { getUniqueValuesByField } from './ArrayUtilities';
 import { convertToTitleCase } from './StringUtilities';
 import { getProperties, TypedProperty } from './ObjectUtilities';
 import songDataFields from '../constants/songDataFields.json';
+import { SongData, SongDataColumn } from '../features/music/MusicTypes';
 
 /**
  * Get the display name associated with this `field`
