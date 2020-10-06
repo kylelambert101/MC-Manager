@@ -58,9 +58,7 @@ const getFileContents = (filePath: string): string | undefined => {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export const loadCSVFile = async (
-  filePath: string
-): Promise<(SongData | undefined)[]> => {
+export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
   // TODO This function freezes the page for large files - can it be extracted to a worker thread?
   const data = getCSVRowsFromString(getFileContents(filePath) || '');
 
@@ -82,9 +80,11 @@ export const loadCSVFile = async (
     throw new Error('No data found in CSV file');
   }
 
-  return datarows.map((row: string[], index: number) =>
-    parseSongDataFromCSVRow(row, index + 1)
-  );
+  return datarows
+    .map((row: string[], index: number) =>
+      parseSongDataFromCSVRow(row, index + 1)
+    )
+    .filter((item) => typeof item !== 'undefined') as SongData[];
 };
 
 export const saveCSVFile = (targetPath: string, songData: SongData[]): void => {
