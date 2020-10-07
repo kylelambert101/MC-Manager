@@ -1,8 +1,8 @@
 import { remote } from 'electron';
 import fs from 'fs';
+import { SongData } from '../features/music/MusicTypes';
 // import detectCharacterEncoding from 'detect-character-encoding';
 import {
-  SongData,
   parseSongDataFromCSVRow,
   isCSVHeaderValid,
   expectedCSVColumnOrder,
@@ -80,9 +80,11 @@ export const loadCSVFile = async (filePath: string): Promise<SongData[]> => {
     throw new Error('No data found in CSV file');
   }
 
-  return datarows.map((row: string[], index: number) =>
-    parseSongDataFromCSVRow(row, index + 1)
-  );
+  return datarows
+    .map((row: string[], index: number) =>
+      parseSongDataFromCSVRow(row, index + 1)
+    )
+    .filter((item) => typeof item !== 'undefined') as SongData[];
 };
 
 export const saveCSVFile = (targetPath: string, songData: SongData[]): void => {

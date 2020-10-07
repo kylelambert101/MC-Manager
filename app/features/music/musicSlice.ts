@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // eslint-disable-next-line import/no-cycle
 import { AppThunk, RootState } from '../../store';
-import { SongData } from '../../utils/CSVUtilities';
+import { SongData } from './MusicTypes';
 import { loadCSVFile, selectFileToLoad } from '../../utils/FileUtilities';
+import { SortField, sortObjectListByFields } from '../../utils/ArrayUtilities';
 
 const musicSlice = createSlice({
   name: 'music',
@@ -11,6 +12,7 @@ const musicSlice = createSlice({
     cachedSongs: [] as SongData[],
     songs: [] as SongData[],
     saveFilePath: '',
+    sortColumns: [] as SortField[],
   },
   reducers: {
     beginCSVLoad: (state) => {
@@ -57,6 +59,33 @@ const musicSlice = createSlice({
     setSaveFilePath: (state, action: PayloadAction<string>) => {
       state.saveFilePath = action.payload;
     },
+    toggleSortColumn: (state, action: PayloadAction<string>) => {
+      const columnField = action.payload;
+      const column = state.sortColumns.find((c) => c.fieldName === columnField);
+      if (typeof column === 'undefined') {
+        // Column isn't in the list, add it in asc mode
+        state.sortColumns.push({
+          fieldName: columnField,
+          direction: 'ascending',
+        } as SortField);
+      } else if (column.direction === 'ascending') {
+        // Column is in the list asc -> switch to desc
+        column.direction = 'descending';
+      } else {
+        // Column is in the list desc -> remove it
+        state.sortColumns = state.sortColumns.filter((c) => c !== column);
+      }
+      // Apply the sorting rules to state.songs
+      // This may or may not work depending on how WriteableDrafts work
+      // TODO replace with local copy of state.sortColumns if it doesn't work
+      state.songs = sortObjectListByFields(
+        state.songs,
+        state.sortColumns.length > 0
+          ? state.sortColumns
+          : // If no sort columns are specified, use ID
+            [{ fieldName: 'id', direction: 'ascending' }]
+      ) as SongData[];
+    },
   },
 });
 
@@ -71,6 +100,7 @@ export const {
   resetSongsFromCached,
   overwriteCachedSongs,
   setSaveFilePath,
+  toggleSortColumn,
 } = musicSlice.actions;
 
 /**
@@ -109,3 +139,5 @@ export const cachedSongsSelector = (state: RootState) =>
   state.music.cachedSongs;
 export const saveFilePathSelector = (state: RootState) =>
   state.music.saveFilePath;
+export const sortColumnsSelector = (state: RootState) =>
+  state.music.sortColumns;

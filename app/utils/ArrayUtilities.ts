@@ -43,3 +43,29 @@ export const areIdenticalArrays = (
   }
   return JSON.stringify(arr1) === JSON.stringify(arr2);
 };
+
+export interface SortField {
+  fieldName: string;
+  direction: 'ascending' | 'descending';
+}
+
+export const sortObjectListByFields = (
+  objList: Record<string, unknown>[],
+  sortFields: SortField[]
+): Record<string, unknown>[] => {
+  const newList = objList;
+  // Alright this isn't pretty but iteratively apply the sorts
+  sortFields.forEach((field) => {
+    newList.sort((a, b) => {
+      if (field.direction === 'ascending') {
+        return Reflect.get(a, field.fieldName) > Reflect.get(b, field.fieldName)
+          ? 1
+          : -1;
+      }
+      return Reflect.get(a, field.fieldName) < Reflect.get(b, field.fieldName)
+        ? 1
+        : -1;
+    });
+  });
+  return newList;
+};
