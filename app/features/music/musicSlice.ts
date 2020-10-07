@@ -75,11 +75,15 @@ const musicSlice = createSlice({
         // Column is in the list desc -> remove it
         state.sortColumns = state.sortColumns.filter((c) => c !== column);
       }
+      // Apply the sorting rules to state.songs
       // This may or may not work depending on how WriteableDrafts work
       // TODO replace with local copy of state.sortColumns if it doesn't work
       state.songs = sortObjectListByFields(
         state.songs,
-        state.sortColumns
+        state.sortColumns.length > 0
+          ? state.sortColumns
+          : // If no sort columns are specified, use ID
+            [{ fieldName: 'id', direction: 'ascending' }]
       ) as SongData[];
     },
   },
