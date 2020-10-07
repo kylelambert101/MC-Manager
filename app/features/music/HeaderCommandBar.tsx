@@ -14,6 +14,7 @@ import {
   resetSongsFromCached,
   saveFilePathSelector,
   songsSelector,
+  resetSortColumns,
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
@@ -149,6 +150,7 @@ const HeaderCommandBar = (): React.ReactElement => {
         cancelAltText="No, go back!"
         onConfirm={() => {
           dispatch(resetSongsFromCached());
+          dispatch(resetSortColumns());
           addToast('Changes discarded', { appearance: 'info' });
         }}
       />

@@ -91,6 +91,9 @@ const musicSlice = createSlice({
             [{ fieldName: 'id', direction: 'ascending' }]
       ) as SongData[];
     },
+    resetSortColumns: (state) => {
+      state.sortColumns = [];
+    },
   },
 });
 
@@ -106,6 +109,7 @@ export const {
   overwriteCachedSongs,
   setSaveFilePath,
   toggleSortColumn,
+  resetSortColumns,
 } = musicSlice.actions;
 
 /**
