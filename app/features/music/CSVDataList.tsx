@@ -74,7 +74,6 @@ const getFieldAdjustedComponent = (
 const CSVDataList = (props: ICSVDataListProps): React.ReactElement => {
   const { songs, onSongChange, onColumnClick, sortColumns } = props;
 
-  // const items = getDummySongData();
   const items = songs;
 
   /*
@@ -100,36 +99,41 @@ const CSVDataList = (props: ICSVDataListProps): React.ReactElement => {
         : // Song data was loaded - use the columns from the file
           getColumnsFromObjectArray(items);
     // Adjust how columns render based on their data
-    return rawColumns.map((column) => {
-      const sortColumn = sortColumns?.find(
-        (c) => c.fieldName === column.fieldName
-      );
-      let isSorted;
-      let isSortedDescending;
-      if (typeof sortColumn !== 'undefined') {
-        isSorted = true;
-        isSortedDescending = sortColumn.direction === 'descending';
-      } else {
-        isSorted = undefined;
-        isSortedDescending = undefined;
-      }
-      return {
-        ...column,
-        onRender: (item: SongData) => {
-          return getFieldAdjustedComponent(
-            item,
-            {
-              name: column.fieldName,
-              dataType: column.data,
-            } as TypedProperty,
-            onSongChange
+    return (
+      rawColumns
+        .map((column) => {
+          const sortColumn = sortColumns?.find(
+            (c) => c.fieldName === column.fieldName
           );
-        },
-        onColumnClick,
-        isSorted,
-        isSortedDescending,
-      };
-    });
+          let isSorted;
+          let isSortedDescending;
+          if (typeof sortColumn !== 'undefined') {
+            isSorted = true;
+            isSortedDescending = sortColumn.direction === 'descending';
+          } else {
+            isSorted = undefined;
+            isSortedDescending = undefined;
+          }
+          return {
+            ...column,
+            onRender: (item: SongData) => {
+              return getFieldAdjustedComponent(
+                item,
+                {
+                  name: column.fieldName,
+                  dataType: column.data,
+                } as TypedProperty,
+                onSongChange
+              );
+            },
+            onColumnClick,
+            isSorted,
+            isSortedDescending,
+          };
+        })
+        // Hide the ID column
+        .filter((column) => column.fieldName !== songDataFields.ID.name)
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items.length, sortColumns]);
 
