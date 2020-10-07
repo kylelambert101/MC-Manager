@@ -53,43 +53,19 @@ export const sortObjectListByFields = (
   objList: Record<string, unknown>[],
   sortFields: SortField[]
 ): Record<string, unknown>[] => {
-  const sorter = (
-    obj1: Record<string, unknown>,
-    obj2: Record<string, unknown>
-  ) => {
-    let result = 0;
-    sortFields.reverse().forEach((sortField) => {
-      console.log(
-        `sorting by ${sortField.fieldName} in direction "${sortField.direction}"`
-      );
-      if (
-        // result has not been assigned yet
-        result === 0 &&
-        // Target field values don't match
-        Reflect.get(obj1, sortField.fieldName) !==
-          Reflect.get(obj2, sortField.fieldName)
-      ) {
-        switch (sortField.direction) {
-          case 'ascending':
-            result =
-              Reflect.get(obj1, sortField.fieldName) <
-              Reflect.get(obj2, sortField.fieldName)
-                ? 1
-                : -1;
-            break;
-          case 'descending':
-            result =
-              Reflect.get(obj1, sortField.fieldName) >
-              Reflect.get(obj2, sortField.fieldName)
-                ? 1
-                : -1;
-            break;
-          default:
-            break;
-        }
+  const newList = objList;
+  // Alright this isn't pretty but iteratively apply the sorts
+  sortFields.forEach((field) => {
+    newList.sort((a, b) => {
+      if (field.direction === 'ascending') {
+        return Reflect.get(a, field.fieldName) > Reflect.get(b, field.fieldName)
+          ? 1
+          : -1;
       }
+      return Reflect.get(a, field.fieldName) < Reflect.get(b, field.fieldName)
+        ? 1
+        : -1;
     });
-    return result;
-  };
-  return objList.sort(sorter);
+  });
+  return newList;
 };
