@@ -26,6 +26,8 @@ const musicSlice = createSlice({
       if (typeof songData !== 'undefined') {
         state.songs = songData;
         state.cachedSongs = songData;
+        // Reset sortColumns upon file load
+        state.sortColumns = [];
       }
     },
     cancelCSVLoad: (state) => {
@@ -34,21 +36,26 @@ const musicSlice = createSlice({
     toggleActive: (state, action: PayloadAction<SongData>) => {
       const targetSong = action.payload;
       state.songs = state.songs.map((s) =>
-        s.id === targetSong.id ? { ...s, active: !s.active } : s
+        s.new_file_name === targetSong.new_file_name
+          ? { ...s, active: !s.active }
+          : s
       );
     },
     updateSong: (state, action: PayloadAction<SongData>) => {
       const targetSong = action.payload;
       state.songs = state.songs.map((s) =>
-        s.id === targetSong.id ? targetSong : s
+        s.new_file_name === targetSong.new_file_name ? targetSong : s
       );
     },
     addSongs: (state, action: PayloadAction<SongData[]>) => {
-      const newSongs = action.payload;
+      const minId = Math.min(0, ...state.songs.map((s) => s.id));
+      const newSongs = action.payload.map((song, index) => ({
+        ...song,
+        id: minId - (action.payload.length - index),
+      }));
+
       // Add the new songs to state.songs and reassign ids
-      state.songs = [...newSongs, ...state.songs].map((song, index) => {
-        return { ...song, id: index + 1 };
-      });
+      state.songs = [...newSongs, ...state.songs];
     },
     resetSongsFromCached: (state) => {
       state.songs = state.cachedSongs;
@@ -76,8 +83,6 @@ const musicSlice = createSlice({
         state.sortColumns = state.sortColumns.filter((c) => c !== column);
       }
       // Apply the sorting rules to state.songs
-      // This may or may not work depending on how WriteableDrafts work
-      // TODO replace with local copy of state.sortColumns if it doesn't work
       state.songs = sortObjectListByFields(
         state.songs,
         state.sortColumns.length > 0
@@ -85,6 +90,9 @@ const musicSlice = createSlice({
           : // If no sort columns are specified, use ID
             [{ fieldName: 'id', direction: 'ascending' }]
       ) as SongData[];
+    },
+    resetSortColumns: (state) => {
+      state.sortColumns = [];
     },
   },
 });
@@ -101,6 +109,7 @@ export const {
   overwriteCachedSongs,
   setSaveFilePath,
   toggleSortColumn,
+  resetSortColumns,
 } = musicSlice.actions;
 
 /**
