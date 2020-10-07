@@ -26,6 +26,8 @@ const musicSlice = createSlice({
       if (typeof songData !== 'undefined') {
         state.songs = songData;
         state.cachedSongs = songData;
+        // Reset sortColumns upon file load
+        state.sortColumns = [];
       }
     },
     cancelCSVLoad: (state) => {
@@ -81,8 +83,6 @@ const musicSlice = createSlice({
         state.sortColumns = state.sortColumns.filter((c) => c !== column);
       }
       // Apply the sorting rules to state.songs
-      // This may or may not work depending on how WriteableDrafts work
-      // TODO replace with local copy of state.sortColumns if it doesn't work
       state.songs = sortObjectListByFields(
         state.songs,
         state.sortColumns.length > 0
