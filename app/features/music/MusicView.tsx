@@ -8,7 +8,7 @@ import {
 } from 'office-ui-fabric-react';
 import styles from './MusicView.css';
 import HeaderCommandBar from './HeaderCommandBar';
-import CSVDataList from './CSVDataList';
+import SongDataList from './SongDataList';
 import {
   isLoadingSelector,
   saveFilePathSelector,
@@ -39,7 +39,7 @@ const MusicView = () => {
           {isLoading ? (
             <ProgressIndicator barHeight={4} />
           ) : (
-            <CSVDataList
+            <SongDataList
               songs={songs}
               onSongChange={(newSong: SongData) => {
                 dispatch(updateSong(newSong));
