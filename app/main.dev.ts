@@ -11,7 +11,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, nativeTheme } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -37,6 +37,9 @@ if (
 ) {
   require('electron-debug')();
 }
+
+// Force chromium to use light theme for this app
+nativeTheme.themeSource = 'light';
 
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
