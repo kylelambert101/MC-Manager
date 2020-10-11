@@ -15,11 +15,13 @@ import {
   saveFilePathSelector,
   songsSelector,
   resetSorting,
+  toggleAndApplySortColumn,
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
 import AddCSVSongsDialog from './AddCSVSongsDialog';
 import { SongData } from './MusicTypes';
+import songDataFields from '../../constants/songDataFields.json';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -112,14 +114,20 @@ const HeaderCommandBar = (): React.ReactElement => {
 
   const farItems: ICommandBarItemProps[] = [
     {
-      key: 'tile',
-      text: 'Grid view',
+      key: 'newest_first',
+      text: 'Newest First View',
       // This needs an ariaLabel since it's icon-only
-      ariaLabel: 'Grid view',
+      ariaLabel: 'Newest First View',
       iconOnly: true,
-      iconProps: { iconName: 'Tiles' },
-      onClick: () => console.log('Tiles'),
-      disabled: true,
+      iconProps: { iconName: 'SortLines' },
+      onClick: () => {
+        dispatch(resetSorting());
+        dispatch(toggleAndApplySortColumn(songDataFields.NEW_FILE_NAME.name));
+        dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
+        // Toggle twice so that it switches to descending
+        dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
+      },
+      // disabled: true,
     },
     {
       key: 'info',

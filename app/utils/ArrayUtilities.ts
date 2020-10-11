@@ -57,6 +57,9 @@ export const sortObjectListByFields = (
   // Alright this isn't pretty but iteratively apply the sorts
   sortFields.forEach((field) => {
     newList.sort((a, b) => {
+      if (Reflect.get(a, field.fieldName) === Reflect.get(b, field.fieldName)) {
+        return 0;
+      }
       if (field.direction === 'ascending') {
         return Reflect.get(a, field.fieldName) > Reflect.get(b, field.fieldName)
           ? 1
