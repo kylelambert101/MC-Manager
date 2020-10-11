@@ -78,6 +78,42 @@ const HeaderCommandBar = (): React.ReactElement => {
       disabled: !fileIsOpen,
     },
     {
+      key: 'sort',
+      text: 'Sort',
+      iconProps: { iconName: 'SortLines' },
+      onClick: (): boolean => false,
+      subMenuProps: {
+        items: [
+          {
+            key: 'newestFirst',
+            name: 'Newest First',
+            text: 'Newest First',
+            // This needs an ariaLabel since it's icon-only
+            ariaLabel: 'Newest First View',
+            iconProps: { iconName: 'SortLines' },
+            onClick: () => {
+              dispatch(resetSorting());
+              dispatch(
+                toggleAndApplySortColumn(songDataFields.NEW_FILE_NAME.name)
+              );
+              dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
+              // Toggle twice so that it switches to descending
+              dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
+            },
+          },
+          {
+            key: 'clearSort',
+            name: 'Clear Sort',
+            text: 'Clear Sort Rules',
+            // This needs an ariaLabel since it's icon-only
+            ariaLabel: 'Clear Sort Rules',
+            iconProps: { iconName: 'RemoveFilter' },
+            onClick: () => dispatch(resetSorting()),
+          },
+        ],
+      },
+    },
+    {
       key: 'cancel',
       text: 'Cancel Changes',
       iconProps: { iconName: 'Cancel' },
@@ -88,46 +124,15 @@ const HeaderCommandBar = (): React.ReactElement => {
     },
   ];
 
-  const overflowItems: ICommandBarItemProps[] = [
-    {
-      key: 'move',
-      text: 'Move to...',
-      onClick: () => console.log('Move to'),
-      iconProps: { iconName: 'MoveToFolder' },
-      disabled: true,
-    },
-    {
-      key: 'copy',
-      text: 'Copy to...',
-      onClick: () => console.log('Copy to'),
-      iconProps: { iconName: 'Copy' },
-      disabled: true,
-    },
-    {
-      key: 'rename',
-      text: 'Rename...',
-      onClick: () => console.log('Rename'),
-      iconProps: { iconName: 'Edit' },
-      disabled: true,
-    },
-  ];
-
   const farItems: ICommandBarItemProps[] = [
     {
-      key: 'newest_first',
-      text: 'Newest First View',
+      key: 'tile',
+      text: 'Grid view',
       // This needs an ariaLabel since it's icon-only
-      ariaLabel: 'Newest First View',
+      ariaLabel: 'Grid view',
       iconOnly: true,
-      iconProps: { iconName: 'SortLines' },
-      onClick: () => {
-        dispatch(resetSorting());
-        dispatch(toggleAndApplySortColumn(songDataFields.NEW_FILE_NAME.name));
-        dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
-        // Toggle twice so that it switches to descending
-        dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
-      },
-      // disabled: true,
+      iconProps: { iconName: 'Tiles' },
+      onClick: () => console.log('Tiles'),
     },
     {
       key: 'info',
@@ -136,8 +141,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       ariaLabel: 'Info',
       iconOnly: true,
       iconProps: { iconName: 'Info' },
-      onClick: () => console.log('Info '),
-      disabled: true,
+      onClick: () => console.log('Info'),
     },
   ];
 
@@ -145,7 +149,6 @@ const HeaderCommandBar = (): React.ReactElement => {
     <div>
       <CommandBar
         items={items}
-        overflowItems={overflowItems}
         overflowButtonProps={overflowProps}
         farItems={farItems}
         ariaLabel="Use left and right arrow keys to navigate between commands"
