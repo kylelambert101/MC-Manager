@@ -14,7 +14,7 @@ import {
   saveFilePathSelector,
   songsSelector,
   updateSong,
-  toggleSortColumn,
+  toggleAndApplySortColumn,
   sortColumnsSelector,
 } from './musicSlice';
 import { SongData } from './MusicTypes';
@@ -52,7 +52,7 @@ const MusicView = () => {
                   typeof column !== 'undefined' &&
                   typeof column.fieldName !== 'undefined'
                 ) {
-                  dispatch(toggleSortColumn(column.fieldName));
+                  dispatch(toggleAndApplySortColumn(column.fieldName));
                 }
               }}
               sortColumns={sortColumns}
