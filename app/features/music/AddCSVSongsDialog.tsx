@@ -11,7 +11,7 @@ import {
   IDialogContentProps,
   Label,
 } from 'office-ui-fabric-react';
-import CSVDataList from './CSVDataList';
+import SongDataList from './SongDataList';
 import {
   getCSVRowsFromString,
   parseSongDataFromCSVRow,
@@ -175,7 +175,7 @@ const AddCSVSongsDialog = (props: Props): React.ReactElement => {
         onGetErrorMessage={getErrorMessage}
       />
       <h3>Parsed Songs:</h3>
-      <CSVDataList songs={parsedSongs} onSongChange={(): boolean => false} />
+      <SongDataList songs={parsedSongs} onSongChange={(): boolean => false} />
       <DialogFooter>
         <Stack
           horizontal

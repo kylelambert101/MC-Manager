@@ -21,7 +21,7 @@ import songDataFields from '../../constants/songDataFields.json';
 import { TypedProperty } from '../../utils/ObjectUtilities';
 import { SortField } from '../../utils/ArrayUtilities';
 
-interface ICSVDataListProps {
+interface ISongDataListProps {
   songs: SongData[];
   onSongChange: (newSong: SongData) => void;
   onColumnClick?: (
@@ -69,9 +69,9 @@ const getFieldAdjustedComponent = (
 };
 
 /**
- * CSVDataList - An DetailsList wrapper to represent music_collection csv data
+ * SongDataList - An DetailsList wrapper to represent music_collection csv data
  */
-const CSVDataList = (props: ICSVDataListProps): React.ReactElement => {
+const SongDataList = (props: ISongDataListProps): React.ReactElement => {
   const { songs, onSongChange, onColumnClick, sortColumns } = props;
 
   const items = songs;
@@ -172,4 +172,4 @@ const CSVDataList = (props: ICSVDataListProps): React.ReactElement => {
   );
 };
 
-export default CSVDataList;
+export default SongDataList;

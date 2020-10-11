@@ -7,14 +7,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import { useToasts } from 'react-toast-notifications';
 import {
-  addSongs,
+  addNewSongs,
   cachedSongsSelector,
   loadDataFromCSV,
   overwriteCachedSongs,
   resetSongsFromCached,
   saveFilePathSelector,
   songsSelector,
-  resetSortColumns,
+  resetSorting,
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
@@ -150,7 +150,7 @@ const HeaderCommandBar = (): React.ReactElement => {
         cancelAltText="No, go back!"
         onConfirm={() => {
           dispatch(resetSongsFromCached());
-          dispatch(resetSortColumns());
+          dispatch(resetSorting());
           addToast('Changes discarded', { appearance: 'info' });
         }}
       />
@@ -159,7 +159,7 @@ const HeaderCommandBar = (): React.ReactElement => {
         message="Paste CSV rows for new songs below."
         visible={addSongDialogIsOpen}
         setVisible={setAddSongDialogIsOpen}
-        onSubmit={(newSongs: SongData[]) => dispatch(addSongs(newSongs))}
+        onSubmit={(newSongs: SongData[]) => dispatch(addNewSongs(newSongs))}
         existingSongs={songs}
       />
     </div>

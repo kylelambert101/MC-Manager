@@ -82,7 +82,11 @@ const musicSlice = createSlice({
         // Column is in the list desc -> remove it
         state.sortColumns = state.sortColumns.filter((c) => c !== column);
       }
-      // Apply the sorting rules to state.songs
+    },
+    resetSortColumns: (state) => {
+      state.sortColumns = [];
+    },
+    applySorting: (state) => {
       state.songs = sortObjectListByFields(
         state.songs,
         state.sortColumns.length > 0
@@ -91,25 +95,27 @@ const musicSlice = createSlice({
             [{ fieldName: 'id', direction: 'ascending' }]
       ) as SongData[];
     },
-    resetSortColumns: (state) => {
-      state.sortColumns = [];
-    },
   },
 });
 
 // Actions for use in thunks below
-const { beginCSVLoad, receiveCSVLoad, cancelCSVLoad } = musicSlice.actions;
+const {
+  beginCSVLoad,
+  receiveCSVLoad,
+  cancelCSVLoad,
+  applySorting,
+  addSongs,
+  toggleSortColumn,
+  resetSortColumns,
+} = musicSlice.actions;
 
 // Actions exported for use elsewhere
 export const {
-  addSongs,
   toggleActive,
   updateSong,
   resetSongsFromCached,
   overwriteCachedSongs,
   setSaveFilePath,
-  toggleSortColumn,
-  resetSortColumns,
 } = musicSlice.actions;
 
 /**
@@ -137,6 +143,40 @@ export const loadDataFromCSV = (): AppThunk => {
 
     // Tell the store data was received
     dispatch(receiveCSVLoad(result));
+  };
+};
+
+/**
+ * Add a list of new songs to the data collection, obeying sort rules
+ * @param songs
+ */
+export const addNewSongs = (songs: SongData[]): AppThunk => {
+  return async (dispatch) => {
+    dispatch(addSongs(songs));
+    dispatch(applySorting());
+  };
+};
+
+/**
+ * Remove all sort rules and reset data sorting
+ */
+export const resetSorting = (): AppThunk => {
+  return async (dispatch) => {
+    dispatch(resetSortColumns());
+    dispatch(applySorting());
+  };
+};
+
+/**
+ * Toggle the sort state of a column and apply updated sort rules
+ * to the dataset
+ *
+ * @param field
+ */
+export const toggleAndApplySortColumn = (field: string): AppThunk => {
+  return async (dispatch) => {
+    dispatch(toggleSortColumn(field));
+    dispatch(applySorting());
   };
 };
 

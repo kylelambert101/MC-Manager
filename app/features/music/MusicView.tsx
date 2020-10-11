@@ -8,13 +8,13 @@ import {
 } from 'office-ui-fabric-react';
 import styles from './MusicView.css';
 import HeaderCommandBar from './HeaderCommandBar';
-import CSVDataList from './CSVDataList';
+import SongDataList from './SongDataList';
 import {
   isLoadingSelector,
   saveFilePathSelector,
   songsSelector,
   updateSong,
-  toggleSortColumn,
+  toggleAndApplySortColumn,
   sortColumnsSelector,
 } from './musicSlice';
 import { SongData } from './MusicTypes';
@@ -39,7 +39,7 @@ const MusicView = () => {
           {isLoading ? (
             <ProgressIndicator barHeight={4} />
           ) : (
-            <CSVDataList
+            <SongDataList
               songs={songs}
               onSongChange={(newSong: SongData) => {
                 dispatch(updateSong(newSong));
@@ -52,7 +52,7 @@ const MusicView = () => {
                   typeof column !== 'undefined' &&
                   typeof column.fieldName !== 'undefined'
                 ) {
-                  dispatch(toggleSortColumn(column.fieldName));
+                  dispatch(toggleAndApplySortColumn(column.fieldName));
                 }
               }}
               sortColumns={sortColumns}
