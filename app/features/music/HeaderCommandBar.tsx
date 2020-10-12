@@ -16,6 +16,7 @@ import {
   songsSelector,
   resetSorting,
   toggleAndApplySortColumn,
+  sortColumnsSelector,
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
@@ -30,6 +31,7 @@ const HeaderCommandBar = (): React.ReactElement => {
   const songs = useSelector(songsSelector);
   const cachedSongs = useSelector(cachedSongsSelector);
   const savePath = useSelector(saveFilePathSelector);
+  const sortColumns = useSelector(sortColumnsSelector);
 
   const { addToast } = useToasts();
 
@@ -108,9 +110,20 @@ const HeaderCommandBar = (): React.ReactElement => {
             // This needs an ariaLabel since it's icon-only
             ariaLabel: 'Clear Sort Rules',
             iconProps: { iconName: 'RemoveFilter' },
-            onClick: () => dispatch(resetSorting()),
+            onClick: () => {
+              dispatch(resetSorting());
+            },
+            disabled: sortColumns.length === 0,
           },
         ],
+      },
+    },
+    {
+      key: 'view',
+      text: 'View Options',
+      iconProps: { iconName: 'View' },
+      onClick: () => {
+        console.log('View Options');
       },
     },
     {
