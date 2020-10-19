@@ -4,6 +4,7 @@ import { AppThunk, RootState } from '../../store';
 import { SongData, ViewOptions } from './MusicTypes';
 import { loadCSVFile, selectFileToLoad } from '../../utils/FileUtilities';
 import { SortField, sortObjectListByFields } from '../../utils/ArrayUtilities';
+import songDataFields from '../../constants/songDataFields.json';
 
 const musicSlice = createSlice({
   name: 'music',
@@ -15,6 +16,7 @@ const musicSlice = createSlice({
     sortColumns: [] as SortField[],
     viewOptions: {
       fadeInactive: false,
+      hiddenColumns: [songDataFields.ID],
     } as ViewOptions,
   },
   reducers: {

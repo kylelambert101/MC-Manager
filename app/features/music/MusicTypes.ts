@@ -28,4 +28,9 @@ export interface ViewOptions {
    * Fade text of rows where active is false
    */
   fadeInactive: boolean;
+
+  /**
+   * List of columns to be hidden from view
+   */
+  hiddenColumns: SongDataColumn[];
 }

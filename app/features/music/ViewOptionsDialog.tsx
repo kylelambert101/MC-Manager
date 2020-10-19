@@ -6,11 +6,14 @@ import {
   DialogFooter,
   DialogType,
   IDialogContentProps,
+  Pivot,
+  PivotItem,
   PrimaryButton,
   Stack,
 } from 'office-ui-fabric-react';
 import * as React from 'react';
-import { ViewOptions } from './MusicTypes';
+import { expectedCSVColumnOrder } from '../../utils/CSVUtilities';
+import { SongDataColumn, ViewOptions } from './MusicTypes';
 
 interface Props {
   visible: boolean;
@@ -29,7 +32,7 @@ const ViewOptionsDialog = (props: Props): React.ReactElement => {
     type: DialogType.normal,
     title: 'View Options',
     closeButtonAriaLabel: 'Close',
-    subText: 'Configure options for viewing music collection data',
+    // subText: 'Configure options for viewing music collection data',
   };
 
   const handleSubmit = () => {
@@ -39,6 +42,7 @@ const ViewOptionsDialog = (props: Props): React.ReactElement => {
 
   const handleCancel = () => {
     setVisible(false);
+    setPendingViewOptions(viewOptions);
 
     if (typeof onCancel !== 'undefined') {
       onCancel();
@@ -55,6 +59,25 @@ const ViewOptionsDialog = (props: Props): React.ReactElement => {
     });
   };
 
+  const handleColumnCheckboxChange = (column: SongDataColumn) => {
+    const { hiddenColumns } = pendingViewOptions;
+    const columnIsHidden = hiddenColumns.some((c) => c.name === column.name);
+    if (columnIsHidden) {
+      setPendingViewOptions({
+        ...pendingViewOptions,
+        // Remove the new column from the hidden list
+        hiddenColumns: hiddenColumns.filter((c) => c.name !== column.name),
+      });
+    } else {
+      setPendingViewOptions({
+        ...pendingViewOptions,
+        hiddenColumns: [...hiddenColumns, column],
+      });
+    }
+  };
+
+  const pivotItemStyle = { marginTop: '1em' };
+
   return (
     <Dialog
       hidden={!visible}
@@ -63,11 +86,32 @@ const ViewOptionsDialog = (props: Props): React.ReactElement => {
       minWidth="80%"
       maxWidth="80%"
     >
-      <Checkbox
-        label="Fade Inactive Song Rows"
-        checked={pendingViewOptions.fadeInactive}
-        onChange={handleFadeInactiveChange}
-      />
+      <Pivot aria-label="View Options Pivot">
+        <PivotItem headerText="General">
+          <Stack tokens={{ childrenGap: '1em' }} style={pivotItemStyle}>
+            <Checkbox
+              label="Fade Inactive Song Rows"
+              checked={pendingViewOptions.fadeInactive}
+              onChange={handleFadeInactiveChange}
+              style={{ marginTop: 10 }}
+            />
+          </Stack>
+        </PivotItem>
+        <PivotItem headerText="Show/Hide Columns">
+          <Stack tokens={{ childrenGap: '1em' }} style={pivotItemStyle}>
+            {expectedCSVColumnOrder.map((col) => (
+              <Checkbox
+                key={col.name}
+                label={col.csvHeaderName}
+                checked={pendingViewOptions.hiddenColumns.some(
+                  (c) => c.name === col.name
+                )}
+                onChange={() => handleColumnCheckboxChange(col)}
+              />
+            ))}
+          </Stack>
+        </PivotItem>
+      </Pivot>
       <DialogFooter>
         <Stack
           horizontal
