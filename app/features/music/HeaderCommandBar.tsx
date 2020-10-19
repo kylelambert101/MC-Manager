@@ -17,12 +17,15 @@ import {
   resetSorting,
   toggleAndApplySortColumn,
   sortColumnsSelector,
+  viewOptionsSelector,
+  setViewOptions,
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
 import AddCSVSongsDialog from './AddCSVSongsDialog';
-import { SongData } from './MusicTypes';
+import { SongData, ViewOptions } from './MusicTypes';
 import songDataFields from '../../constants/songDataFields.json';
+import ViewOptionsDialog from './ViewOptionsDialog';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -32,12 +35,16 @@ const HeaderCommandBar = (): React.ReactElement => {
   const cachedSongs = useSelector(cachedSongsSelector);
   const savePath = useSelector(saveFilePathSelector);
   const sortColumns = useSelector(sortColumnsSelector);
+  const viewOptions = useSelector(viewOptionsSelector);
 
   const { addToast } = useToasts();
 
   // Local state for tracking dialog state
   const [cancelDialogIsOpen, setCancelDialogIsOpen] = React.useState(false);
   const [addSongDialogIsOpen, setAddSongDialogIsOpen] = React.useState(false);
+  const [viewOptionsDialogIsOpen, setViewOptionsDialogIsOpen] = React.useState(
+    false
+  );
 
   const dataHasChanged = React.useMemo(
     () => JSON.stringify(songs) !== JSON.stringify(cachedSongs),
@@ -123,7 +130,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       text: 'View Options',
       iconProps: { iconName: 'View' },
       onClick: () => {
-        console.log('View Options');
+        setViewOptionsDialogIsOpen(true);
       },
     },
     {
@@ -185,6 +192,14 @@ const HeaderCommandBar = (): React.ReactElement => {
         setVisible={setAddSongDialogIsOpen}
         onSubmit={(newSongs: SongData[]) => dispatch(addNewSongs(newSongs))}
         existingSongs={songs}
+      />
+      <ViewOptionsDialog
+        visible={viewOptionsDialogIsOpen}
+        setVisible={setViewOptionsDialogIsOpen}
+        onSubmit={(newOptions: ViewOptions) => {
+          dispatch(setViewOptions(newOptions));
+        }}
+        viewOptions={viewOptions}
       />
     </div>
   );

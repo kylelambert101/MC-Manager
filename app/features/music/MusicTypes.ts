@@ -22,3 +22,10 @@ export interface SongDataColumn {
   csvHeaderName: string;
   dataType: string;
 }
+
+export interface ViewOptions {
+  /**
+   * Fade text of rows where active is false
+   */
+  fadeInactive: boolean;
+}

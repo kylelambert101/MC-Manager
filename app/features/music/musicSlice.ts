@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 // eslint-disable-next-line import/no-cycle
 import { AppThunk, RootState } from '../../store';
-import { SongData } from './MusicTypes';
+import { SongData, ViewOptions } from './MusicTypes';
 import { loadCSVFile, selectFileToLoad } from '../../utils/FileUtilities';
 import { SortField, sortObjectListByFields } from '../../utils/ArrayUtilities';
 
@@ -13,6 +13,9 @@ const musicSlice = createSlice({
     songs: [] as SongData[],
     saveFilePath: '',
     sortColumns: [] as SortField[],
+    viewOptions: {
+      fadeInactive: false,
+    } as ViewOptions,
   },
   reducers: {
     beginCSVLoad: (state) => {
@@ -95,6 +98,9 @@ const musicSlice = createSlice({
             [{ fieldName: 'id', direction: 'ascending' }]
       ) as SongData[];
     },
+    setViewOptions: (state, action: PayloadAction<ViewOptions>) => {
+      state.viewOptions = action.payload;
+    },
   },
 });
 
@@ -116,6 +122,7 @@ export const {
   resetSongsFromCached,
   overwriteCachedSongs,
   setSaveFilePath,
+  setViewOptions,
 } = musicSlice.actions;
 
 /**
@@ -190,3 +197,5 @@ export const saveFilePathSelector = (state: RootState) =>
   state.music.saveFilePath;
 export const sortColumnsSelector = (state: RootState) =>
   state.music.sortColumns;
+export const viewOptionsSelector = (state: RootState) =>
+  state.music.viewOptions;
