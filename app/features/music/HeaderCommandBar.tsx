@@ -26,6 +26,7 @@ import AddCSVSongsDialog from './dialogs/AddCSVSongsDialog';
 import { SongData, ViewOptions } from './MusicTypes';
 import songDataFields from '../../constants/songDataFields.json';
 import ViewOptionsDialog from './dialogs/ViewOptionsDialog';
+import PopupModal from './dialogs/PopupModal';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -45,6 +46,7 @@ const HeaderCommandBar = (): React.ReactElement => {
   const [viewOptionsDialogIsOpen, setViewOptionsDialogIsOpen] = React.useState(
     false
   );
+  const [testIsOpen, setTestIsOpen] = React.useState(false);
 
   const dataHasChanged = React.useMemo(
     () => JSON.stringify(songs) !== JSON.stringify(cachedSongs),
@@ -152,7 +154,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       ariaLabel: 'Grid view',
       iconOnly: true,
       iconProps: { iconName: 'Tiles' },
-      onClick: () => console.log('Tiles'),
+      onClick: () => setTestIsOpen(true),
     },
     {
       key: 'info',
@@ -201,6 +203,14 @@ const HeaderCommandBar = (): React.ReactElement => {
         }}
         viewOptions={viewOptions}
       />
+      <PopupModal
+        visible={testIsOpen}
+        setVisible={setTestIsOpen}
+        onSubmit={() => console.log('a')}
+        title="Test Popup"
+      >
+        <span>Hello</span>
+      </PopupModal>
     </div>
   );
 };
