@@ -11,14 +11,14 @@ import {
   IDialogContentProps,
   Label,
 } from 'office-ui-fabric-react';
-import SongDataList from './SongDataList';
+import SongDataList from '../SongDataList';
 import {
   getCSVRowsFromString,
   parseSongDataFromCSVRow,
-} from '../../utils/CSVUtilities';
-import { SongData } from './MusicTypes';
-import songDataFields from '../../constants/songDataFields.json';
-import { areIdenticalArrays } from '../../utils/ArrayUtilities';
+} from '../../../utils/CSVUtilities';
+import { SongData } from '../MusicTypes';
+import songDataFields from '../../../constants/songDataFields.json';
+import { areIdenticalArrays } from '../../../utils/ArrayUtilities';
 
 interface Props {
   /**
@@ -175,7 +175,14 @@ const AddCSVSongsDialog = (props: Props): React.ReactElement => {
         onGetErrorMessage={getErrorMessage}
       />
       <h3>Parsed Songs:</h3>
-      <SongDataList songs={parsedSongs} onSongChange={(): boolean => false} />
+      <SongDataList
+        songs={parsedSongs}
+        onSongChange={(): boolean => false}
+        viewOptions={{
+          fadeInactive: false,
+          hiddenColumns: [songDataFields.ID],
+        }}
+      />
       <DialogFooter>
         <Stack
           horizontal

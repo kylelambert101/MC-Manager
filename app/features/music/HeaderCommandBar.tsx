@@ -22,10 +22,10 @@ import {
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
-import AddCSVSongsDialog from './AddCSVSongsDialog';
+import AddCSVSongsDialog from './dialogs/AddCSVSongsDialog';
 import { SongData, ViewOptions } from './MusicTypes';
 import songDataFields from '../../constants/songDataFields.json';
-import ViewOptionsDialog from './ViewOptionsDialog';
+import ViewOptionsDialog from './dialogs/ViewOptionsDialog';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 

@@ -12,8 +12,8 @@ import {
   Stack,
 } from 'office-ui-fabric-react';
 import * as React from 'react';
-import { expectedCSVColumnOrder } from '../../utils/CSVUtilities';
-import { SongDataColumn, ViewOptions } from './MusicTypes';
+import { expectedCSVColumnOrder } from '../../../utils/CSVUtilities';
+import { SongDataColumn, ViewOptions } from '../MusicTypes';
 
 interface Props {
   visible: boolean;
