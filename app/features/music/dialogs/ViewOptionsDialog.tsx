@@ -6,6 +6,7 @@ import {
   DialogFooter,
   DialogType,
   IDialogContentProps,
+  Label,
   Pivot,
   PivotItem,
   PrimaryButton,
@@ -98,14 +99,21 @@ const ViewOptionsDialog = (props: Props): React.ReactElement => {
           </Stack>
         </PivotItem>
         <PivotItem headerText="Show/Hide Columns">
-          <Stack tokens={{ childrenGap: '1em' }} style={pivotItemStyle}>
+          <Label htmlFor="showHideColumnStack">Visible Columns:</Label>
+          <Stack
+            key="showHideColumnStack"
+            tokens={{ childrenGap: '1em' }}
+            style={pivotItemStyle}
+          >
             {expectedCSVColumnOrder.map((col) => (
               <Checkbox
                 key={col.name}
                 label={col.csvHeaderName}
-                checked={pendingViewOptions.hiddenColumns.some(
-                  (c) => c.name === col.name
-                )}
+                checked={
+                  !pendingViewOptions.hiddenColumns.some(
+                    (c) => c.name === col.name
+                  )
+                }
                 onChange={() => handleColumnCheckboxChange(col)}
               />
             ))}
