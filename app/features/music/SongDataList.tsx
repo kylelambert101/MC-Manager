@@ -9,12 +9,15 @@ import {
   ConstrainMode,
   DetailsListLayoutMode,
   IDetailsListStyles,
+  IDetailsRowStyles,
+  IDetailsListProps,
+  DetailsRow,
 } from 'office-ui-fabric-react/lib/DetailsList';
 import { IRenderFunction } from 'office-ui-fabric-react/lib/Utilities';
 import { Sticky, StickyPositionType } from 'office-ui-fabric-react/lib/Sticky';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 import { getDummySongData } from '../../utils/CSVUtilities';
-import { SongData } from './MusicTypes';
+import { SongData, ViewOptions } from './MusicTypes';
 import { getColumnsFromObjectArray } from '../../utils/DetailsListUtilities';
 import ActiveCheckbox from './ActiveCheckbox';
 import songDataFields from '../../constants/songDataFields.json';
@@ -29,6 +32,7 @@ interface ISongDataListProps {
     column?: IColumn
   ) => void;
   sortColumns?: SortField[];
+  viewOptions: ViewOptions;
 }
 
 /**
@@ -72,7 +76,13 @@ const getFieldAdjustedComponent = (
  * SongDataList - An DetailsList wrapper to represent music_collection csv data
  */
 const SongDataList = (props: ISongDataListProps): React.ReactElement => {
-  const { songs, onSongChange, onColumnClick, sortColumns } = props;
+  const {
+    songs,
+    onSongChange,
+    onColumnClick,
+    sortColumns,
+    viewOptions,
+  } = props;
 
   const items = songs;
 
@@ -99,43 +109,43 @@ const SongDataList = (props: ISongDataListProps): React.ReactElement => {
         : // Song data was loaded - use the columns from the file
           getColumnsFromObjectArray(items);
     // Adjust how columns render based on their data
-    return (
-      rawColumns
-        .map((column) => {
-          const sortColumn = sortColumns?.find(
-            (c) => c.fieldName === column.fieldName
-          );
-          let isSorted;
-          let isSortedDescending;
-          if (typeof sortColumn !== 'undefined') {
-            isSorted = true;
-            isSortedDescending = sortColumn.direction === 'descending';
-          } else {
-            isSorted = undefined;
-            isSortedDescending = undefined;
-          }
-          return {
-            ...column,
-            onRender: (item: SongData) => {
-              return getFieldAdjustedComponent(
-                item,
-                {
-                  name: column.fieldName,
-                  dataType: column.data,
-                } as TypedProperty,
-                onSongChange
-              );
-            },
-            onColumnClick,
-            isSorted,
-            isSortedDescending,
-          };
-        })
-        // Hide the ID column
-        .filter((column) => column.fieldName !== songDataFields.ID.name)
-    );
+    return rawColumns
+      .map((column) => {
+        const sortColumn = sortColumns?.find(
+          (c) => c.fieldName === column.fieldName
+        );
+        let isSorted;
+        let isSortedDescending;
+        if (typeof sortColumn !== 'undefined') {
+          isSorted = true;
+          isSortedDescending = sortColumn.direction === 'descending';
+        } else {
+          isSorted = undefined;
+          isSortedDescending = undefined;
+        }
+        return {
+          ...column,
+          onRender: (item: SongData) => {
+            return getFieldAdjustedComponent(
+              item,
+              {
+                name: column.fieldName,
+                dataType: column.data,
+              } as TypedProperty,
+              onSongChange
+            );
+          },
+          onColumnClick,
+          isSorted,
+          isSortedDescending,
+        };
+      })
+      .filter(
+        (column) =>
+          !viewOptions.hiddenColumns.some((hc) => hc.name === column.fieldName)
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items.length, sortColumns]);
+  }, [items.length, sortColumns, viewOptions]);
 
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
     headerProps,
@@ -160,6 +170,25 @@ const SongDataList = (props: ISongDataListProps): React.ReactElement => {
       </Sticky>
     );
   };
+
+  const onRenderRow: IDetailsListProps['onRenderRow'] = (rowProps) => {
+    const customStyles: Partial<IDetailsRowStyles> = {};
+    if (rowProps) {
+      const { item, itemIndex } = rowProps;
+
+      // Fade inactive rows to light grey
+      if (viewOptions.fadeInactive) {
+        if (!(item as SongData).active) {
+          customStyles.root = { color: 'lightgrey' };
+        }
+      }
+
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      return <DetailsRow {...rowProps} styles={customStyles} />;
+    }
+    return null;
+  };
+
   return (
     <DetailsList
       columns={columns}
@@ -168,6 +197,7 @@ const SongDataList = (props: ISongDataListProps): React.ReactElement => {
       onRenderDetailsHeader={onRenderDetailsHeader}
       constrainMode={ConstrainMode.unconstrained}
       layoutMode={DetailsListLayoutMode.fixedColumns}
+      onRenderRow={onRenderRow}
     />
   );
 };

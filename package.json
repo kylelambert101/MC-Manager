@@ -279,7 +279,8 @@
         }
       }
     ],
-    "singleQuote": true
+    "singleQuote": true,
+    "endOfLine": "auto"
   },
   "stylelint": {
     "extends": [

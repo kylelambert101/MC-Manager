@@ -16,6 +16,7 @@ import {
   updateSong,
   toggleAndApplySortColumn,
   sortColumnsSelector,
+  viewOptionsSelector,
 } from './musicSlice';
 import { SongData } from './MusicTypes';
 
@@ -24,6 +25,7 @@ const MusicView = () => {
   const filePath = useSelector(saveFilePathSelector);
   const songs = useSelector(songsSelector);
   const sortColumns = useSelector(sortColumnsSelector);
+  const viewOptions = useSelector(viewOptionsSelector);
   const dispatch = useDispatch();
 
   const windowTitle = `MC-Manager${filePath === '' ? '' : ` - ${filePath}`}`;
@@ -56,6 +58,7 @@ const MusicView = () => {
                 }
               }}
               sortColumns={sortColumns}
+              viewOptions={viewOptions}
             />
           )}
         </ScrollablePane>

@@ -15,11 +15,18 @@ import {
   saveFilePathSelector,
   songsSelector,
   resetSorting,
+  toggleAndApplySortColumn,
+  sortColumnsSelector,
+  viewOptionsSelector,
+  setViewOptions,
 } from './musicSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { saveCSVFile } from '../../utils/FileUtilities';
-import AddCSVSongsDialog from './AddCSVSongsDialog';
-import { SongData } from './MusicTypes';
+import AddCSVSongsDialog from './dialogs/AddCSVSongsDialog';
+import { SongData, ViewOptions } from './MusicTypes';
+import songDataFields from '../../constants/songDataFields.json';
+import ViewOptionsDialog from './dialogs/ViewOptionsDialog';
+import PopupModal from './dialogs/PopupModal';
 
 const overflowProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -28,12 +35,18 @@ const HeaderCommandBar = (): React.ReactElement => {
   const songs = useSelector(songsSelector);
   const cachedSongs = useSelector(cachedSongsSelector);
   const savePath = useSelector(saveFilePathSelector);
+  const sortColumns = useSelector(sortColumnsSelector);
+  const viewOptions = useSelector(viewOptionsSelector);
 
   const { addToast } = useToasts();
 
   // Local state for tracking dialog state
   const [cancelDialogIsOpen, setCancelDialogIsOpen] = React.useState(false);
   const [addSongDialogIsOpen, setAddSongDialogIsOpen] = React.useState(false);
+  const [viewOptionsDialogIsOpen, setViewOptionsDialogIsOpen] = React.useState(
+    false
+  );
+  const [testIsOpen, setTestIsOpen] = React.useState(false);
 
   const dataHasChanged = React.useMemo(
     () => JSON.stringify(songs) !== JSON.stringify(cachedSongs),
@@ -76,6 +89,53 @@ const HeaderCommandBar = (): React.ReactElement => {
       disabled: !fileIsOpen,
     },
     {
+      key: 'sort',
+      text: 'Sort',
+      iconProps: { iconName: 'SortLines' },
+      onClick: (): boolean => false,
+      subMenuProps: {
+        items: [
+          {
+            key: 'newestFirst',
+            name: 'Newest First',
+            text: 'Newest First',
+            // This needs an ariaLabel since it's icon-only
+            ariaLabel: 'Newest First View',
+            iconProps: { iconName: 'SortLines' },
+            onClick: () => {
+              dispatch(resetSorting());
+              dispatch(
+                toggleAndApplySortColumn(songDataFields.NEW_FILE_NAME.name)
+              );
+              dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
+              // Toggle twice so that it switches to descending
+              dispatch(toggleAndApplySortColumn(songDataFields.DATE.name));
+            },
+          },
+          {
+            key: 'clearSort',
+            name: 'Clear Sort',
+            text: 'Clear Sort Rules',
+            // This needs an ariaLabel since it's icon-only
+            ariaLabel: 'Clear Sort Rules',
+            iconProps: { iconName: 'RemoveFilter' },
+            onClick: () => {
+              dispatch(resetSorting());
+            },
+            disabled: sortColumns.length === 0,
+          },
+        ],
+      },
+    },
+    {
+      key: 'view',
+      text: 'View Options',
+      iconProps: { iconName: 'View' },
+      onClick: () => {
+        setViewOptionsDialogIsOpen(true);
+      },
+    },
+    {
       key: 'cancel',
       text: 'Cancel Changes',
       iconProps: { iconName: 'Cancel' },
@@ -83,30 +143,6 @@ const HeaderCommandBar = (): React.ReactElement => {
         setCancelDialogIsOpen(true);
       },
       disabled: !dataHasChanged,
-    },
-  ];
-
-  const overflowItems: ICommandBarItemProps[] = [
-    {
-      key: 'move',
-      text: 'Move to...',
-      onClick: () => console.log('Move to'),
-      iconProps: { iconName: 'MoveToFolder' },
-      disabled: true,
-    },
-    {
-      key: 'copy',
-      text: 'Copy to...',
-      onClick: () => console.log('Copy to'),
-      iconProps: { iconName: 'Copy' },
-      disabled: true,
-    },
-    {
-      key: 'rename',
-      text: 'Rename...',
-      onClick: () => console.log('Rename'),
-      iconProps: { iconName: 'Edit' },
-      disabled: true,
     },
   ];
 
@@ -118,8 +154,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       ariaLabel: 'Grid view',
       iconOnly: true,
       iconProps: { iconName: 'Tiles' },
-      onClick: () => console.log('Tiles'),
-      disabled: true,
+      onClick: () => setTestIsOpen(true),
     },
     {
       key: 'info',
@@ -128,8 +163,7 @@ const HeaderCommandBar = (): React.ReactElement => {
       ariaLabel: 'Info',
       iconOnly: true,
       iconProps: { iconName: 'Info' },
-      onClick: () => console.log('Info '),
-      disabled: true,
+      onClick: () => console.log('Info'),
     },
   ];
 
@@ -137,7 +171,6 @@ const HeaderCommandBar = (): React.ReactElement => {
     <div>
       <CommandBar
         items={items}
-        overflowItems={overflowItems}
         overflowButtonProps={overflowProps}
         farItems={farItems}
         ariaLabel="Use left and right arrow keys to navigate between commands"
@@ -162,6 +195,22 @@ const HeaderCommandBar = (): React.ReactElement => {
         onSubmit={(newSongs: SongData[]) => dispatch(addNewSongs(newSongs))}
         existingSongs={songs}
       />
+      <ViewOptionsDialog
+        visible={viewOptionsDialogIsOpen}
+        setVisible={setViewOptionsDialogIsOpen}
+        onSubmit={(newOptions: ViewOptions) => {
+          dispatch(setViewOptions(newOptions));
+        }}
+        viewOptions={viewOptions}
+      />
+      <PopupModal
+        visible={testIsOpen}
+        setVisible={setTestIsOpen}
+        onSubmit={() => console.log('a')}
+        title="Test Popup"
+      >
+        <span>Hello</span>
+      </PopupModal>
     </div>
   );
 };
