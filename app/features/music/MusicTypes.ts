@@ -33,4 +33,9 @@ export interface ViewOptions {
    * List of columns to be hidden from view
    */
   hiddenColumns: SongDataColumn[];
+
+  /**
+   * Field on which to base row color alternation (zebra rows)
+   */
+  zebraColorKey?: string;
 }

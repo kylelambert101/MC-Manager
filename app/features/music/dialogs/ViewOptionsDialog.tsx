@@ -5,7 +5,9 @@ import {
   Dialog,
   DialogFooter,
   DialogType,
+  Dropdown,
   IDialogContentProps,
+  IDropdownOption,
   Label,
   Pivot,
   PivotItem,
@@ -77,19 +79,42 @@ const ViewOptionsDialog = (props: Props): React.ReactElement => {
     }
   };
 
-  const pivotItemStyle = { marginTop: '1em' };
+  const pivotItemStyle = { marginTop: '1em', marginLeft: '1em' };
+
+  const zebraFieldOptions: IDropdownOption[] = [
+    { key: 'none', text: 'None' },
+    ...expectedCSVColumnOrder.map((column) => ({
+      key: column.name,
+      text: column.displayName,
+    })),
+  ];
 
   return (
     <Dialog
       hidden={!visible}
       dialogContentProps={dialogContentProps}
       onDismiss={handleCancel}
-      minWidth="80%"
-      maxWidth="80%"
+      minWidth="50%"
+      maxWidth="50%"
     >
       <Pivot aria-label="View Options Pivot">
         <PivotItem headerText="General">
           <Stack tokens={{ childrenGap: '1em' }} style={pivotItemStyle}>
+            <Dropdown
+              label="Key field for Alternate Row Shading"
+              options={zebraFieldOptions}
+              styles={{
+                dropdown: { width: 300 },
+              }}
+              selectedKey={pendingViewOptions.zebraColorKey || 'none'}
+              onChange={(_, item) => {
+                setPendingViewOptions({
+                  ...pendingViewOptions,
+                  zebraColorKey:
+                    item?.key === 'none' ? undefined : `${item?.key}`,
+                });
+              }}
+            />
             <Checkbox
               label="Fade Inactive Song Rows"
               checked={pendingViewOptions.fadeInactive}
