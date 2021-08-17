@@ -8,6 +8,7 @@ import {
   IDetailsColumnRenderTooltipProps,
   ConstrainMode,
   DetailsListLayoutMode,
+  IDetailsListStyles,
   IDetailsRowStyles,
   IDetailsListProps,
   DetailsRow,
@@ -170,35 +171,17 @@ const SongDataList = (props: ISongDataListProps): React.ReactElement => {
     );
   };
 
-  const zebraKeys = React.useMemo(() => {
-    return (
-      items
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .map((i) => i[viewOptions.zebraColorKey])
-        .filter((value, index, self) => self.indexOf(value) === index)
-    );
-  }, [items, viewOptions.zebraColorKey]);
-
   const onRenderRow: IDetailsListProps['onRenderRow'] = (rowProps) => {
-    const customStyles: Partial<IDetailsRowStyles> = {
-      root: { color: undefined, backgroundColor: undefined },
-    };
-
+    const customStyles: Partial<IDetailsRowStyles> = {};
     if (rowProps) {
       const { item, itemIndex } = rowProps;
 
-      const fade = viewOptions.fadeInactive && !(item as SongData).active;
-      const useAltColor = viewOptions.zebraColorKey
-        ? zebraKeys.indexOf(item[viewOptions.zebraColorKey]) % 2 === 0
-        : false;
-
-      customStyles.root = {
-        // eslint-disable-next-line no-nested-ternary
-        color: fade ? (useAltColor ? 'white' : 'lightgrey') : undefined,
-        // eslint-disable-next-line no-nested-ternary
-        backgroundColor: useAltColor ? 'lightgrey' : fade ? 'white' : undefined,
-      };
+      // Fade inactive rows to light grey
+      if (viewOptions.fadeInactive) {
+        if (!(item as SongData).active) {
+          customStyles.root = { color: 'lightgrey' };
+        }
+      }
 
       // eslint-disable-next-line react/jsx-props-no-spreading
       return <DetailsRow {...rowProps} styles={customStyles} />;

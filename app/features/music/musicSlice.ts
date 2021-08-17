@@ -17,7 +17,6 @@ const musicSlice = createSlice({
     viewOptions: {
       fadeInactive: false,
       hiddenColumns: [songDataFields.ID],
-      zebraColorKey: undefined,
     } as ViewOptions,
   },
   reducers: {
